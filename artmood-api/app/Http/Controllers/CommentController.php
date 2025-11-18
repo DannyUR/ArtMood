@@ -11,7 +11,7 @@ class CommentController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => Comment::with(['user', 'work'])->paginate(10)
+            'data' => Comment::with(['user', 'work'])->get()
         ]);
     }
 

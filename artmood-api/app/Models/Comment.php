@@ -9,6 +9,8 @@ class Comment extends Model
 
     protected $table = 'comments';
     protected $primaryKey = 'id_comentario';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'content',

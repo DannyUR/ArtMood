@@ -11,7 +11,7 @@ class NotificationController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => Notification::with('user')->paginate(10)
+            'data' => Notification::with('user')->get()
         ]);
     }
 
@@ -39,6 +39,23 @@ class NotificationController extends Controller
             'data' => $notification
         ], 201);
     }
+
+    public function markAllAsRead()
+    {
+        // Obtener el usuario autenticado
+        $userId = auth()->user()->id_usuario;
+
+        // Marcar todas sus notificaciones como leídas
+        Notification::where('id_usuario', $userId)
+                    ->update(['status' => 'leido']);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Todas las notificaciones fueron marcadas como leídas'
+        ]);
+    }
+
+
 
     public function destroy($id)
     {

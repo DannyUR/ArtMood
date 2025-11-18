@@ -9,6 +9,8 @@ class Work extends Model
 
     protected $table = 'works';
     protected $primaryKey = 'id_obra';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'title',

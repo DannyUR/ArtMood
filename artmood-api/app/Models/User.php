@@ -17,6 +17,7 @@ class User extends Authenticatable implements JWTSubject
     protected $primaryKey = 'id_usuario';
     public $incrementing = true;
     protected $keyType = 'int';
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -36,7 +37,7 @@ class User extends Authenticatable implements JWTSubject
     // Un usuario tiene muchas obras
     public function works()
     {
-        return $this->hasMany(Work::class, 'id_usuario');
+        return $this->hasMany(Work::class, 'id_usuario', 'id_usuario');
     }
 
     // Un usuario tiene muchos comentarios

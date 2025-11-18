@@ -9,7 +9,7 @@ class EmotionController extends Controller
 {
     public function index()
     {
-        return Emotion::paginate(10);
+        return Emotion::all();
     }
 
     public function store(Request $request)

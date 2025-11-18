@@ -6,60 +6,108 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // Registro
+
+    // =============================
+    // REGISTRO
+    // =============================
     public function register(Request $request)
     {
         $request->validate([
-            'full_name' => 'required|string|max:255',
-            'email'     => 'required|email|unique:users',
+            'name'      => 'required|string|max:255',
+            'nickname'  => 'required|string|max:50|unique:users,nickname',
+            'email'     => 'required|email|unique:users,email',
             'password'  => 'required|min:6',
+            'profile_photo' => 'nullable|string'
         ]);
 
+        // Crear usuario
         $user = User::create([
-            'full_name' => $request->full_name,
+            'name'      => $request->name,
+            'nickname'  => $request->nickname,
             'email'     => $request->email,
             'password'  => Hash::make($request->password),
+            'profile_photo' => $request->profile_photo
         ]);
 
+        // Generar token
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'Usuario registrado correctamente.',
             'user'    => $user,
             'token'   => $token
-        ]);
+        ], 201);
     }
 
-    // Login
+    // -----------------------
+    // LOGIN
+    // -----------------------
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only("email", "password");
 
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales incorrectas'], 401);
+        try {
+            // Intentar generar token
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json([
+                    "error" => "Credenciales inválidas"
+                ], 401);
+            }
+
+            // Usuario autenticado
+            $user = Auth::user();
+
+            return response()->json([
+                "message" => "Inicio de sesión correcto",
+                "token"   => $token,
+                "user"    => $user
+            ], 200);
+
+        } catch (JWTException $e) {
+            return response()->json([
+                "error" => "No se pudo crear el token"
+            ], 500);
         }
-
-        return response()->json([
-            'message' => 'Inicio de sesión exitoso.',
-            'token' => $token,
-            'user'  => auth()->user(),
-        ]);
     }
 
-    // Cerrar sesión
+    // -----------------------
+    // LOGOUT
+    // -----------------------
     public function logout()
     {
-        auth()->logout();
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
 
-        return response()->json(['message' => 'Sesión cerrada correctamente.']);
+            return response()->json([
+                "message" => "Sesión cerrada correctamente"
+            ]);
+
+        } catch (JWTException $e) {
+            return response()->json([
+                "error" => "No se pudo cerrar la sesión"
+            ], 500);
+        }
     }
 
-    // Obtener perfil
+    // -----------------------
+    // PERFIL DEL USUARIO
+    // -----------------------
     public function profile()
     {
-        return response()->json(auth()->user());
+        try {
+            $user = Auth::user(); // Usuario autenticado
+
+            return response()->json($user);
+
+        } catch (JWTException $e) {
+            return response()->json([
+                "error" => "Token no válido"
+            ], 401);
+        }
     }
 }

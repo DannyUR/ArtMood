@@ -9,6 +9,8 @@ class Reaction extends Model
 
     protected $table = 'reactions';
     protected $primaryKey = 'id_reaccion';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'emoji',

@@ -11,7 +11,7 @@ class FollowerController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => Follower::with(['seguidor', 'seguido'])->paginate(10)
+            'data' => Follower::with(['seguidor', 'seguido'])->get()
         ]);
     }
 
@@ -40,6 +40,30 @@ class FollowerController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Dejaste de seguir al usuario'
+        ]);
+    }
+
+    public function followers($id)
+    {
+        $followers = Follower::with('seguidor')
+            ->where('id_seguido', $id)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $followers
+        ]);
+    }
+
+    public function following($id)
+    {
+        $following = Follower::with('seguido')
+            ->where('id_seguidor', $id)
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $following
         ]);
     }
 }

@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamp('created_at')->useCurrent();
             $table->dateTime('last_notification_check')->nullable();            
             $table->rememberToken();
+            
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

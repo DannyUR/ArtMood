@@ -9,6 +9,8 @@ class Emotion extends Model
 
     protected $table = 'emotions';
     protected $primaryKey = 'id_emocion';
+    public $timestamps = false;
+
 
     protected $fillable = [
         'name',

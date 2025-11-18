@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id('id_notificacion');
             $table->unsignedBigInteger('id_usuario');
             $table->enum('type', ['comentario','reaccion','seguimiento','sistema']);
+            $table->enum('status', ['leido', 'no_leido'])->default('no_leido');
             $table->text('message');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->foreign('id_usuario')->references('id_usuario')->on('users')->onDelete('cascade');
         });

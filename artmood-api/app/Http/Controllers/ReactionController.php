@@ -11,7 +11,7 @@ class ReactionController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data' => Reaction::with(['user', 'work'])->paginate(10)
+            'data' => Reaction::with(['user', 'work'])->get()
         ]);
     }
 

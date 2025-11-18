@@ -18,13 +18,15 @@ class Follower extends Model
         'id_seguido',
     ];
 
-    public function follower()
+    // usuario que sigue (seguidor)
+    public function seguidor()
     {
-        return $this->belongsTo(User::class, 'id_seguidor');
+        return $this->belongsTo(User::class, 'id_seguidor', 'id_usuario');
     }
 
-    public function followed()
+    // usuario que es seguido (seguido)
+    public function seguido()
     {
-        return $this->belongsTo(User::class, 'id_seguido');
+        return $this->belongsTo(User::class, 'id_seguido', 'id_usuario');
     }
 }

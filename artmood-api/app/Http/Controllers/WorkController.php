@@ -10,14 +10,22 @@ class WorkController extends Controller
     public function index()
     {
         return response()->json([
-            'status' => 'success',
-            'data' => Work::with(['user', 'category', 'emotion'])->paginate(10)
-        ]);
+        'status' => 'success',
+        'data' => Work::with([
+            'user:id_usuario,name,nickname,email,profile_photo',
+            'category:id_categoria,name,description',
+            'emotion:id_emocion,name,icon'
+        ])->get()
+    ]);
     }
 
     public function show($id)
     {
-        $work = Work::with(['user', 'category', 'emotion'])->findOrFail($id);
+        $work = Work::with([
+        'user:id_usuario,name,nickname,email,profile_photo',
+        'category:id_categoria,name,description',
+        'emotion:id_emocion,name,icon'
+        ])->findOrFail($id);
 
         return response()->json([
             'status' => 'success',

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id_emocion');
             $table->string('name', 100)->unique();
             $table->string('icon', 10)->nullable();
+            $table->timestamps();
         });
     }
 
