@@ -19,16 +19,15 @@ const Sidebar = () => {
         <h1 className="text-xl font-bold">ArtMood Admin</h1>
         <p className="text-sm text-gray-400">Panel de Administración</p>
       </div>
-      
+
       <nav className="p-4">
         <ul className="space-y-2">
           {menuItems.map(item => (
             <li key={item.path}>
               <Link
                 to={item.path}
-                className={`flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-700 transition-colors ${
-                  location.pathname === item.path ? 'bg-purple-600' : ''
-                }`}
+                className={`flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-700 transition-colors ${location.pathname === item.path ? 'bg-purple-600' : ''
+                  }`}
               >
                 <span>{item.icon}</span>
                 <span>{item.label}</span>
@@ -37,7 +36,7 @@ const Sidebar = () => {
           ))}
         </ul>
       </nav>
-      
+
       <div className="absolute bottom-0 w-full p-4 border-t border-gray-700">
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">

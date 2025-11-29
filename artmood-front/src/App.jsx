@@ -14,6 +14,9 @@ import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
 import Gallery from './pages/user/Gallery';
 import Dashboard from './pages/admin/Dashboard';
+import UsersManagement from './pages/admin/UsersManagement';
+import CategoriesManagement from './pages/admin/CategoriesManagement';
+import ObrasManagement from './pages/admin/ObrasManagement';
 
 function App() {
   return (
@@ -39,6 +42,9 @@ function App() {
           {/* Rutas de administrador */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="obras" element={<ObrasManagement />} />
+            <Route path="usuarios" element={<UsersManagement />} />
+            <Route path="categorias" element={<CategoriesManagement />} />
           </Route>
 
           {/* Ruta por defecto */}
