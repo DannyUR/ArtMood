@@ -64,14 +64,8 @@ class AuthController extends Controller
 
             return response()->json([
                 "message" => "Inicio de sesión correcto",
-                    "token"   => $token,
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'nickname' => $user->nickname,
-                        'email' => $user->email,
-                        'role' => $user->role,
-                    ]                    
+                "token"   => $token,
+                "user"    => $user
             ], 200);
 
         } catch (JWTException $e) {
