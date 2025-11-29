@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { authService } from '../services/authService';
 import api from '../services/api';
 
 const AuthContext = createContext();
@@ -17,8 +18,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
+    const savedUser = localStorage.getItem('user');
+
+    if (token && savedUser) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      setUser(JSON.parse(savedUser));
       verifyToken();
     } else {
       setLoading(false);
@@ -27,8 +31,9 @@ export const AuthProvider = ({ children }) => {
 
   const verifyToken = async () => {
     try {
-      const response = await api.get('/user');
-      setUser(response.data);
+      const userData = await authService.getProfile();
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
       console.error('Error verifying token:', error);
       logout();
@@ -39,23 +44,28 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await api.post('/login', credentials);
-      const { token, user } = response.data;
+      const response = await authService.login(credentials);
+      const { token, user: userData } = response;
       
+      // Guardar en localStorage
       localStorage.setItem('token', token);
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
+      localStorage.setItem('user', JSON.stringify(userData));
       
-      return { success: true, user };
+      // Configurar axios
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      
+      // Actualizar estado
+      setUser(userData);
+      
+      return { success: true, user: userData };
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'Error al iniciar sesión';
+      const errorMessage = error.response?.data?.error || 'Error al iniciar sesión';
       return { success: false, error: errorMessage };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
+    authService.logout();
     setUser(null);
   };
 

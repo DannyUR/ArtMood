@@ -12,10 +12,8 @@ import AdminLayout from './components/layouts/AdminLayout';
 import Home from './pages/public/Home';
 import LoginForm from './components/auth/LoginForm';
 import RegisterForm from './components/auth/RegisterForm';
-
-// Placeholder pages para desarrollo
-const Dashboard = () => <div className="p-6">Dashboard Admin - En desarrollo</div>;
-const UserGallery = () => <div className="p-6">Galería Usuario - En desarrollo</div>;
+import Gallery from './pages/user/Gallery';
+import Dashboard from './pages/admin/Dashboard';
 
 function App() {
   return (
@@ -35,7 +33,7 @@ function App() {
 
           {/* Rutas de usuario */}
           <Route path="/user" element={<UserLayout />}>
-            <Route index element={<UserGallery />} />
+            <Route index element={<Gallery />} />
           </Route>
 
           {/* Rutas de administrador */}
