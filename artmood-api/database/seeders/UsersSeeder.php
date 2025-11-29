@@ -21,6 +21,7 @@ class UsersSeeder extends Seeder
                 'email' => 'danny@gmail.com',
                 'password' => Hash::make('1234567890'),
                 'profile_photo' => 'default.jpg',
+                'role' => 'admin'       
             ],
             [
                 'name' => 'Rafael Luján',
@@ -28,6 +29,7 @@ class UsersSeeder extends Seeder
                 'email' => 'rafael@gmail.com',
                 'password' => Hash::make('1234567890'),
                 'profile_photo' => 'default.jpg',
+                'role' => 'admin'        
             ],
             [
                 'name' => 'María López',
@@ -35,6 +37,7 @@ class UsersSeeder extends Seeder
                 'email' => 'maria@gmail.com',
                 'password' => Hash::make('1234567890'),
                 'profile_photo' => 'default.jpg',
+                'role' => 'user'
             ],
         ]);
     }
