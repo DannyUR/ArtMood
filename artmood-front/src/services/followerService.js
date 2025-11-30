@@ -1,19 +1,11 @@
-// services/followerService.js
+// services/followerService.js (ACTUALIZADO)
 import api from './api';
 
 export const followerService = {
   // Seguir a un usuario
   follow: async (idSeguido) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      const data = {
-        id_seguidor: user.id,
-        id_seguido: idSeguido
-      };
-      
-      console.log('📤 Siguiendo usuario:', data);
-      const response = await api.post('/followers', data);
-      console.log('✅ Usuario seguido:', response.data);
+      const response = await api.post(`/follow/${idSeguido}`);
       return response.data;
     } catch (error) {
       console.error('❌ Error siguiendo usuario:', error);
@@ -21,14 +13,10 @@ export const followerService = {
     }
   },
 
-  // Dejar de seguir (eliminar relación) - CORREGIDO para tu API
+  // Dejar de seguir
   unfollow: async (idSeguido) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      
-      // Tu API espera parámetros en la URL: /followers/{id_seguidor}/{id_seguido}
-      const response = await api.delete(`/followers/${user.id}/${idSeguido}`);
-      console.log('✅ Dejaste de seguir al usuario:', response.data);
+      const response = await api.delete(`/unfollow/${idSeguido}`);
       return response.data;
     } catch (error) {
       console.error('❌ Error dejando de seguir:', error);
@@ -39,7 +27,7 @@ export const followerService = {
   // Obtener seguidores de un usuario
   getFollowers: async (userId) => {
     try {
-      const response = await api.get(`/followers/${userId}/followers`);
+      const response = await api.get(`/followers/${userId}`);
       return response.data;
     } catch (error) {
       console.error('❌ Error obteniendo seguidores:', error);
@@ -50,7 +38,7 @@ export const followerService = {
   // Obtener usuarios que sigue
   getFollowing: async (userId) => {
     try {
-      const response = await api.get(`/followers/${userId}/following`);
+      const response = await api.get(`/following/${userId}`);
       return response.data;
     } catch (error) {
       console.error('❌ Error obteniendo seguidos:', error);

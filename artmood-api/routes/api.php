@@ -40,6 +40,9 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/works/{id}',       [WorkController::class, 'show']);
     Route::put('/works/{id}',       [WorkController::class, 'update']);
     Route::delete('/works/{id}',    [WorkController::class, 'destroy']);
+    Route::get('/works/user/{userId}', [WorkController::class, 'getByUser']);
+    Route::get('/works/emotion/{emotionId}', [WorkController::class, 'getByEmotion']);
+    Route::get('/works/category/{categoryId}', [WorkController::class, 'getByCategory']);
 
     // ---------- COMMENTS ----------
     Route::get('/works/{id}/comments', [CommentController::class, 'index']);
