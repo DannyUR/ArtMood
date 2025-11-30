@@ -31,6 +31,12 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+    
+    // Mostrar errores de validación detallados
+    if (error.response?.status === 422) {
+      console.error('Errores de validación:', error.response.data);
+    }
+    
     return Promise.reject(error);
   }
 );

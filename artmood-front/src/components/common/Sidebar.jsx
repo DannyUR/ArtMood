@@ -7,11 +7,12 @@ const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { path: '/admin', label: 'Dashboard', icon: '📊' },
-    { path: '/admin/obras', label: 'Gestionar Obras', icon: '🎨' },
-    { path: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
-    { path: '/admin/categorias', label: 'Categorías', icon: '📂' },
-  ];
+  { path: '/admin', label: 'Dashboard', icon: '📊' },
+  { path: '/admin/obras', label: 'Gestionar Obras', icon: '🎨' },
+  { path: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
+  { path: '/admin/categorias', label: 'Categorías', icon: '📂' },
+  { path: '/admin/emociones', label: 'Emociones', icon: '😊' },
+];
 
   return (
     <div className="fixed left-0 top-0 h-full w-64 bg-gray-800 text-white">

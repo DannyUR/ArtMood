@@ -4,7 +4,7 @@ export const obraService = {
   // Obtener todas las obras
   getAll: async () => {
     const response = await api.get('/works');
-    return response.data.data; // Extraemos el array de obras del response
+    return response.data.data;
   },
 
   // Obtener una obra por ID
@@ -13,16 +13,38 @@ export const obraService = {
     return response.data.data;
   },
 
-  // Crear obra
+  // Crear obra (ahora soporta FormData para imágenes)
   create: async (obraData) => {
-    const response = await api.post('/works', obraData);
-    return response.data;
+    // Si es FormData (con imagen), no configurar headers
+    if (obraData instanceof FormData) {
+      const response = await api.post('/works', obraData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // Si es JSON normal
+      const response = await api.post('/works', obraData);
+      return response.data;
+    }
   },
 
-  // Actualizar obra
+  // Actualizar obra (soporta FormData para imágenes)
   update: async (id, obraData) => {
-    const response = await api.put(`/works/${id}`, obraData);
-    return response.data;
+    // Si es FormData (con imagen), no configurar headers
+    if (obraData instanceof FormData) {
+      const response = await api.post(`/works/${id}`, obraData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } else {
+      // Si es JSON normal
+      const response = await api.put(`/works/${id}`, obraData);
+      return response.data;
+    }
   },
 
   // Eliminar obra

@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(savedUser));
       verifyToken();
     } else {
-      setLoading(false);
+      setLoading(false); // Asegurar que loading se establece en false
     }
   }, []);
 
@@ -46,17 +46,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authService.login(credentials);
       const { token, user: userData } = response;
-      
+
+      console.log('Usuario recibido del login:', userData); // Agrega este log
+
       // Guardar en localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
-      
+
       // Configurar axios
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+
       // Actualizar estado
       setUser(userData);
-      
+
       return { success: true, user: userData };
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'Error al iniciar sesión';

@@ -75,6 +75,22 @@ const ObrasManagement = () => {
         <p className="text-gray-600 mt-2">
           Administra las {obras.length} obras publicadas en ArtMood
         </p>
+        <div className="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <span className="text-yellow-400 text-lg">⚠️</span>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Permisos de administrador
+              </h3>
+              <div className="mt-2 text-sm text-yellow-700">
+                <p>Como administrador, puedes eliminar obras que incumplan las normas de la comunidad.</p>
+                <p className="mt-1">La edición de obras está reservada para los artistas propietarios.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {error && (
@@ -96,7 +112,7 @@ const ObrasManagement = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center">
             <div className="p-2 bg-blue-100 rounded-lg">
@@ -110,7 +126,7 @@ const ObrasManagement = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center">
             <div className="p-2 bg-green-100 rounded-lg">
@@ -225,15 +241,6 @@ const ObrasManagement = () => {
                     {new Date(obra.fecha_publicacion).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => {
-                        // Aquí podríamos implementar la edición
-                        alert(`Editar obra: ${obra.title}`);
-                      }}
-                      className="text-blue-600 hover:text-blue-900 mr-4"
-                    >
-                      Editar
-                    </button>
                     <button
                       onClick={() => handleDeleteObra(obra.id_obra, obra.title)}
                       className="text-red-600 hover:text-red-900"

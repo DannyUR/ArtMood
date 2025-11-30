@@ -17,6 +17,10 @@ import Dashboard from './pages/admin/Dashboard';
 import UsersManagement from './pages/admin/UsersManagement';
 import CategoriesManagement from './pages/admin/CategoriesManagement';
 import ObrasManagement from './pages/admin/ObrasManagement';
+import UploadObra from './pages/user/UploadObra';
+import EmotionsManagement from './pages/admin/EmotionsManagement';
+import EditObra from './pages/user/EditObra';
+import MyObras from './pages/user/MyObras';
 
 function App() {
   return (
@@ -37,6 +41,10 @@ function App() {
           {/* Rutas de usuario */}
           <Route path="/user" element={<UserLayout />}>
             <Route index element={<Gallery />} />
+            <Route path="my-obras" element={<MyObras />} />
+            <Route path="upload" element={<UploadObra />} />
+            <Route path="edit-obra/:id" element={<EditObra />} />
+            <Route path="profile" element={<div className="p-6">Perfil - En desarrollo</div>} />
           </Route>
 
           {/* Rutas de administrador */}
@@ -45,6 +53,7 @@ function App() {
             <Route path="obras" element={<ObrasManagement />} />
             <Route path="usuarios" element={<UsersManagement />} />
             <Route path="categorias" element={<CategoriesManagement />} />
+            <Route path="emociones" element={<EmotionsManagement />} />
           </Route>
 
           {/* Ruta por defecto */}

@@ -15,7 +15,7 @@ class AuthController extends Controller
     // =============================
     // REGISTRO
     // =============================
-    public function register(Request $request)
+   public function register(Request $request)
     {
         $request->validate([
             'name'      => 'required|string|max:255',
@@ -39,7 +39,13 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Usuario registrado correctamente.',
-            'user'    => $user,
+            'user'    => [
+                'id_usuario' => $user->id_usuario, // Cambiado
+                'name' => $user->name,
+                'nickname' => $user->nickname,
+                'email' => $user->email,
+                'role' => $user->role,
+            ],
             'token'   => $token
         ], 201);
     }
@@ -47,7 +53,7 @@ class AuthController extends Controller
     // -----------------------
     // LOGIN
     // -----------------------
-    public function login(Request $request)
+   public function login(Request $request)
     {
         $credentials = $request->only("email", "password");
 
@@ -64,14 +70,14 @@ class AuthController extends Controller
 
             return response()->json([
                 "message" => "Inicio de sesión correcto",
-                    "token"   => $token,
-                    'user' => [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'nickname' => $user->nickname,
-                        'email' => $user->email,
-                        'role' => $user->role,
-                    ]                    
+                "token"   => $token,
+                'user' => [
+                    'id_usuario' => $user->id_usuario, // Cambiado de 'id' a 'id_usuario'
+                    'name' => $user->name,
+                    'nickname' => $user->nickname,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ]                    
             ], 200);
 
         } catch (JWTException $e) {
@@ -108,7 +114,13 @@ class AuthController extends Controller
         try {
             $user = Auth::user(); // Usuario autenticado
 
-            return response()->json($user);
+            return response()->json([
+                'id_usuario' => $user->id_usuario, // Cambiado
+                'name' => $user->name,
+                'nickname' => $user->nickname,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]);
 
         } catch (JWTException $e) {
             return response()->json([

@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { obraService } from '../../services/obraService';
 import { categoryService } from '../../services/categoryService';
+import ObraDetailModal from '../../components/obra/ObraDetailModal';
 
 const Gallery = () => {
+  const { user } = useAuth();
   const [obras, setObras] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedObra, setSelectedObra] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     loadObras();
@@ -35,6 +41,19 @@ const Gallery = () => {
     }
   };
 
+  const handleDeleteObra = async (obraId, obraTitle) => {
+    if (window.confirm(`¿Estás seguro de eliminar la obra "${obraTitle}"?`)) {
+      try {
+        await obraService.delete(obraId);
+        setObras(obras.filter(obra => obra.id_obra !== obraId));
+        alert('Obra eliminada correctamente');
+      } catch (error) {
+        console.error('Error eliminando obra:', error);
+        alert('Error al eliminar la obra');
+      }
+    }
+  };
+
   const getCategoriaNombre = (idCategoria) => {
     const categoria = categorias.find(cat => cat.id_categoria === idCategoria);
     return categoria ? categoria.name : 'Sin categoría';
@@ -43,6 +62,16 @@ const Gallery = () => {
   const getEmojiEmocion = (emocion) => {
     if (!emocion) return '';
     return emocion.icon || '🎨';
+  };
+
+  const openObraDetail = (obra) => {
+    setSelectedObra(obra);
+    setIsModalOpen(true);
+  };
+
+  const closeObraDetail = () => {
+    setIsModalOpen(false);
+    setSelectedObra(null);
   };
 
   if (loading) {
@@ -65,13 +94,32 @@ const Gallery = () => {
 
   return (
     <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Galería de Arte
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Descubre {obras.length} obras de nuestra comunidad creativa
-        </p>
+      {/* Encabezado con botones */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Galería de Arte
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Descubre {obras.length} obras de nuestra comunidad creativa
+          </p>
+        </div>
+        <div className="flex space-x-3">
+          <Link
+            to="/user/my-obras"
+            className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
+          >
+            <span>📂</span>
+            <span>Mis Obras</span>
+          </Link>
+          <Link
+            to="/user/upload"
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+          >
+            <span>📤</span>
+            <span>Subir Obra</span>
+          </Link>
+        </div>
       </div>
 
       {/* Estadísticas rápidas */}
@@ -118,7 +166,11 @@ const Gallery = () => {
       {/* Grid de obras */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {obras.map((obra) => (
-          <div key={obra.id_obra} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+          <div 
+            key={obra.id_obra} 
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => openObraDetail(obra)}
+          >
             {/* Imagen de la obra */}
             <div className="aspect-w-16 aspect-h-9 bg-gray-200">
               {obra.imagen ? (
@@ -127,7 +179,8 @@ const Gallery = () => {
                   alt={obra.title}
                   className="w-full h-48 object-cover"
                   onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=ArtMood';
+                    e.target.style.display = 'none';
+                    e.target.nextSibling.style.display = 'flex';
                   }}
                 />
               ) : (
@@ -160,11 +213,34 @@ const Gallery = () => {
                 <span>por {obra.user?.nickname || 'Anónimo'}</span>
               </div>
 
-              {/* Fecha de publicación */}
+              {/* Fecha de publicación y botones de acción */}
               <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-xs text-gray-400">
-                  Publicado el {new Date(obra.fecha_publicacion).toLocaleDateString()}
-                </p>
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-gray-400">
+                    Publicado el {new Date(obra.fecha_publicacion).toLocaleDateString()}
+                  </p>
+                  
+                  {/* Botones de acción - solo mostrar si el usuario es el propietario */}
+                  {user && obra.id_usuario === (user.id_usuario || user.id) && (
+                    <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
+                      <Link
+                        to={`/user/edit-obra/${obra.id_obra}`}
+                        className="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors"
+                      >
+                        Editar
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteObra(obra.id_obra, obra.title);
+                        }}
+                        className="text-red-600 hover:text-red-800 text-xs font-medium transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -178,11 +254,25 @@ const Gallery = () => {
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
             No hay obras aún
           </h3>
-          <p className="text-gray-600">
+          <p className="text-gray-600 mb-4">
             Sé el primero en compartir tu arte con la comunidad
           </p>
+          <Link
+            to="/user/upload"
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
+          >
+            <span>📤</span>
+            <span>Subir Primera Obra</span>
+          </Link>
         </div>
       )}
+
+      {/* Modal de detalles de obra */}
+      <ObraDetailModal 
+        obra={selectedObra}
+        isOpen={isModalOpen}
+        onClose={closeObraDetail}
+      />
     </div>
   );
 };
