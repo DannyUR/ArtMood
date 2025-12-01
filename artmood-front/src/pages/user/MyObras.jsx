@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { obraService } from '../../services/obraService';
 import { categoryService } from '../../services/categoryService';
+import EditObraModal from '../../components/modals/EditObraModal';
+import ConfirmModal from '../../components/modals/ConfirmModal';
+import './MyObras.css';
 
 const MyObras = () => {
   const { user } = useAuth();
@@ -11,21 +14,79 @@ const MyObras = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Estado para el modal
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedObraId, setSelectedObraId] = useState(null);
+
+  // Estado para modal de confirmación
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [obraToDelete, setObraToDelete] = useState(null);
+
   useEffect(() => {
     loadMyObras();
     loadCategorias();
   }, []);
 
+  // Función para abrir el modal de edición
+  const openEditModal = (obraId) => {
+    setSelectedObraId(obraId);
+    setIsEditModalOpen(true);
+  };
+
+  // Función para cerrar el modal
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedObraId(null);
+  };
+
+  // Función para recargar después de editar
+  const handleEditSuccess = () => {
+    loadMyObras(); // Recargar la lista
+  };
+
+  // Función para abrir modal de confirmación
+  const openDeleteConfirm = (obraId, obraTitle) => {
+    setObraToDelete({
+      id: obraId,
+      title: obraTitle
+    });
+    setIsConfirmModalOpen(true);
+  };
+
+  // Función para cerrar modal de confirmación
+  const closeDeleteConfirm = () => {
+    setIsConfirmModalOpen(false);
+    setObraToDelete(null);
+  };
+
+  // Función para eliminar obra (se llama desde el modal)
+  const handleDeleteConfirm = async () => {
+    if (!obraToDelete) return;
+
+    try {
+      await obraService.delete(obraToDelete.id);
+      setObras(obras.filter(obra => obra.id_obra !== obraToDelete.id));
+
+      // Puedes mostrar un toast o mensaje de éxito aquí
+      console.log(`Obra "${obraToDelete.title}" eliminada correctamente`);
+
+    } catch (error) {
+      console.error('Error eliminando obra:', error);
+      // Podrías mostrar un modal de error
+      alert('Error al eliminar la obra');
+    }
+  };
+
   const loadMyObras = async () => {
     try {
       setLoading(true);
       const todasLasObras = await obraService.getAll();
-      
+
       // Filtrar solo las obras del usuario actual
-      const misObras = todasLasObras.filter(obra => 
+      const misObras = todasLasObras.filter(obra =>
         obra.id_usuario === (user.id_usuario || user.id)
       );
-      
+
       setObras(misObras);
     } catch (error) {
       console.error('Error cargando mis obras:', error);
@@ -44,17 +105,9 @@ const MyObras = () => {
     }
   };
 
-  const handleDeleteObra = async (obraId, obraTitle) => {
-    if (window.confirm(`¿Estás seguro de eliminar la obra "${obraTitle}"?`)) {
-      try {
-        await obraService.delete(obraId);
-        setObras(obras.filter(obra => obra.id_obra !== obraId));
-        alert('Obra eliminada correctamente');
-      } catch (error) {
-        console.error('Error eliminando obra:', error);
-        alert('Error al eliminar la obra');
-      }
-    }
+  // MODIFICAR la función handleDeleteObra (eliminar window.confirm)
+  const handleDeleteObra = (obraId, obraTitle) => {
+    openDeleteConfirm(obraId, obraTitle);
   };
 
   const getCategoriaNombre = (idCategoria) => {
@@ -67,220 +120,256 @@ const MyObras = () => {
     return emocion.icon || '🎨';
   };
 
-  // SVG placeholder como fallback
-  const placeholderSVG = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQ4IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjNEY0NkU1Ii8+Cjx0ZXh0IHg9IjI0IiB5PSIyOCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+OqDwvdGV4dD4KPC9zdmc+';
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return 'Fecha no disponible';
+    }
+  };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="myobras-loading">
+        <div className="myobras-loading-spinner"></div>
+        <p>Cargando tus obras...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Mis Obras
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Gestiona las {obras.length} obras que has publicado
-            </p>
+    <div className="myobras-container">
+      {/* Header Section */}
+      <div className="myobras-header">
+        <div className="myobras-header-content">
+          <div className="myobras-header-badge">
+            <span>Tu Colección Personal</span>
           </div>
-          <Link
-            to="/user/upload"
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
-          >
-            <span>📤</span>
-            <span>Subir Nueva Obra</span>
-          </Link>
+          <h1 className="myobras-page-title">Mis Obras</h1>
+          <p className="myobras-page-subtitle">
+            Gestiona las {obras.length} obras que has publicado en ArtMood
+          </p>
         </div>
+        <Link
+          to="/user/upload"
+          className="myobras-upload-cta-btn"
+        >
+          <span className="myobras-btn-icon">🎨</span>
+          <span className="myobras-btn-text">Subir Nueva Obra</span>
+        </Link>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
+        <div className="myobras-error-message">
+          <div className="myobras-error-icon">⚠️</div>
+          <div className="myobras-error-content">
+            <h4>Error al cargar tus obras</h4>
+            <p>{error}</p>
+          </div>
+          <button onClick={loadMyObras} className="myobras-retry-btn">
+            Reintentar
+          </button>
         </div>
       )}
 
-      {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <span className="text-2xl">🎨</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Total Obras</p>
-              <p className="text-2xl font-bold text-gray-900">{obras.length}</p>
+      {/* Stats Cards Mejoradas */}
+      <div className="myobras-stats-grid">
+        <div className="myobras-stat-card myobras-stat-primary">
+          <div className="myobras-stat-content">
+            <div className="myobras-stat-icon">🎨</div>
+            <div className="myobras-stat-info">
+              <div className="myobras-stat-number">{obras.length}</div>
+              <div className="myobras-stat-label">Total de Obras</div>
             </div>
           </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <span className="text-2xl">📅</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Más Reciente</p>
-              <p className="text-lg font-bold text-gray-900">
-                {obras.length > 0 ? new Date(obras[0].fecha_publicacion).toLocaleDateString() : 'N/A'}
-              </p>
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <span className="text-2xl">👁️</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">En Galería</p>
-              <p className="text-2xl font-bold text-gray-900">{obras.length}</p>
-            </div>
-          </div>
+          <div className="myobras-stat-wave"></div>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex items-center">
-            <div className="p-2 bg-yellow-100 rounded-lg">
-              <span className="text-2xl">😊</span>
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Emociones</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {new Set(obras.filter(obra => obra.id_emocion).map(obra => obra.id_emocion)).size}
-              </p>
+        <div className="myobras-stat-card myobras-stat-secondary">
+          <div className="myobras-stat-content">
+            <div className="myobras-stat-icon">📅</div>
+            <div className="myobras-stat-info">
+              <div className="myobras-stat-number">
+                {obras.length > 0 ? formatDate(obras[0].fecha_publicacion) : 'N/A'}
+              </div>
+              <div className="myobras-stat-label">Más Reciente</div>
             </div>
           </div>
+          <div className="myobras-stat-wave"></div>
+        </div>
+
+        <div className="myobras-stat-card myobras-stat-accent">
+          <div className="myobras-stat-content">
+            <div className="myobras-stat-icon">👁️</div>
+            <div className="myobras-stat-info">
+              <div className="myobras-stat-number">{obras.length}</div>
+              <div className="myobras-stat-label">En Exhibición</div>
+            </div>
+          </div>
+          <div className="myobras-stat-wave"></div>
+        </div>
+
+        <div className="myobras-stat-card myobras-stat-warning">
+          <div className="myobras-stat-content">
+            <div className="myobras-stat-icon">😊</div>
+            <div className="myobras-stat-info">
+              <div className="myobras-stat-number">
+                {new Set(obras.filter(obra => obra.id_emocion).map(obra => obra.id_emocion)).size}
+              </div>
+              <div className="myobras-stat-label">Emociones Únicas</div>
+            </div>
+          </div>
+          <div className="myobras-stat-wave"></div>
         </div>
       </div>
 
-      {/* Tabla de obras */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Obra
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Información
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Categoría & Emoción
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fecha
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {obras.map((obra) => (
-                <tr key={obra.id_obra} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-12 w-12">
-                        {obra.imagen ? (
-                          <img
-                            className="h-12 w-12 rounded-lg object-cover"
-                            src={`http://localhost:8000/storage/${obra.imagen}`}
-                            alt={obra.title}
-                            onError={(e) => {
-                              e.target.src = placeholderSVG;
-                            }}
-                          />
-                        ) : (
-                          <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
-                            <span className="text-white text-lg">🎨</span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
-                          {obra.title}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          ID: {obra.id_obra}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-gray-900 max-w-xs">
-                      {obra.description || 'Sin descripción'}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex flex-col space-y-1">
-                      <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
+      {/* Grid de Obras - Diseño Mejorado */}
+      <div className="myobras-grid-section">
+        <div className="myobras-section-header">
+          <h2 className="myobras-section-title">Tu Galería Personal</h2>
+          <p className="myobras-section-subtitle">
+            Todas las obras que has compartido con la comunidad
+          </p>
+        </div>
+
+        <div className="myobras-grid">
+          {obras.map((obra, index) => (
+            <div key={obra.id_obra} className="myobras-card">
+              {/* Header de la Tarjeta */}
+              <div className="myobras-card-header">
+                <div className="myobras-image-container">
+                  {obra.imagen ? (
+                    <img
+                      className="myobras-image"
+                      src={`http://localhost:8000/storage/${obra.imagen}`}
+                      alt={obra.title}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="myobras-image-fallback">
+                    <span className="myobras-fallback-icon">🎨</span>
+                  </div>
+                </div>
+
+                {/* Badge de acciones - ACTUALIZAR */}
+                <div className="myobras-action-badge">
+                  <button
+                    onClick={() => openEditModal(obra.id_obra)}
+                    className="myobras-action-btn myobras-edit-btn"
+                    title="Editar obra"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDeleteObra(obra.id_obra, obra.title)}
+                    className="myobras-action-btn myobras-delete-btn"
+                    title="Eliminar obra"
+                  >
+                    🗑️
+                  </button>
+                </div>
+
+                {/* Contenido de la Tarjeta */}
+                <div className="myobras-card-content">
+                  <div className="myobras-info">
+                    <h3 className="myobras-title">{obra.title}</h3>
+                    <p className="myobras-description">
+                      {obra.description || 'Sin descripción disponible'}
+                    </p>
+                  </div>
+
+                  <div className="myobras-meta">
+                    <div className="myobras-meta-item">
+                      <span className="myobras-meta-label">Categoría</span>
+                      <span className="myobras-meta-value myobras-categoria-badge">
                         {getCategoriaNombre(obra.id_categoria)}
                       </span>
-                      {obra.emotion && (
-                        <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                          <span className="mr-1">{getEmojiEmocion(obra.emotion)}</span>
+                    </div>
+
+                    {obra.emotion && (
+                      <div className="myobras-meta-item">
+                        <span className="myobras-meta-label">Emoción</span>
+                        <span className="myobras-meta-value myobras-emotion-badge">
+                          <span className="myobras-emotion-emoji">{getEmojiEmocion(obra.emotion)}</span>
                           {obra.emotion.name}
                         </span>
-                      )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="myobras-footer">
+                    <div className="myobras-publish-info">
+                      <span className="myobras-publish-date">
+                        📅 {formatDate(obra.fecha_publicacion)}
+                      </span>
+                      <span className="myobras-obra-id">ID: #{obra.id_obra}</span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(obra.fecha_publicacion).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
+
+                    <div className="myobras-action-links">
                       <Link
-                        to={`/user/edit-obra/${obra.id_obra}`}
-                        className="text-blue-600 hover:text-blue-900"
+                        to="/gallery"
+                        className="myobras-view-link"
                       >
-                        Editar
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteObra(obra.id_obra, obra.title)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        Eliminar
-                      </button>
-                      <Link
-                        to="/user"
-                        className="text-green-600 hover:text-green-900"
-                      >
-                        Ver en Galería
+                        👁️ Ver en Galería
                       </Link>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Mensaje si no hay obras */}
+      {/* MODAL DE EDICIÓN */}
+      <EditObraModal
+        isOpen={isEditModalOpen}
+        onClose={closeEditModal}
+        obraId={selectedObraId}
+        onSuccess={handleEditSuccess}
+      />
+
+      {/* NUEVO MODAL DE CONFIRMACIÓN */}
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={closeDeleteConfirm}
+        onConfirm={handleDeleteConfirm}
+        title="Eliminar Obra"
+        message={`¿Estás seguro de eliminar la obra "${obraToDelete?.title}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
+
+      {/* Empty State Mejorado */}
       {obras.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">🎨</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            Aún no has publicado obras
-          </h3>
-          <p className="text-gray-600 mb-4">
-            Comparte tu primera obra con la comunidad ArtMood
+        <div className="myobras-empty-state">
+          <div className="myobras-empty-illustration">
+            <div className="myobras-empty-icon">🎨</div>
+            <div className="myobras-empty-sparkles">
+              <span>✨</span>
+              <span>✨</span>
+              <span>✨</span>
+            </div>
+          </div>
+          <h3 className="myobras-empty-title">Tu galería está esperando</h3>
+          <p className="myobras-empty-description">
+            Comparte tu primera obra y comienza tu journey artístico en ArtMood
           </p>
           <Link
             to="/user/upload"
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
+            className="myobras-empty-cta-btn"
           >
-            <span>📤</span>
-            <span>Publicar Mi Primera Obra</span>
+            <span className="myobras-empty-btn-icon">🚀</span>
+            <span className="myobras-empty-btn-text">Publicar Mi Primera Obra</span>
           </Link>
         </div>
       )}

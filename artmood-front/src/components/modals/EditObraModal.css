@@ -1,0 +1,320 @@
+/* components/modals/EditObraModal.css */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 24px 32px;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-subtitle {
+    margin: 4px 0 0 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.modal-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-body {
+    padding: 32px;
+}
+
+.loading-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    text-align: center;
+}
+
+.loading-spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Reutiliza los estilos de EditObra.css pero ajusta para modal */
+.edit-obra-modal .form-section {
+    margin-bottom: 24px;
+}
+
+.edit-obra-modal .section-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #374151;
+}
+
+.edit-obra-modal .form-input,
+.edit-obra-modal .form-textarea,
+.edit-obra-modal .form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.edit-obra-modal .form-input:focus,
+.edit-obra-modal .form-textarea:focus,
+.edit-obra-modal .form-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.edit-obra-modal .form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.edit-obra-modal .char-counter {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.edit-obra-modal .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Image Preview */
+.edit-obra-modal .image-preview-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.edit-obra-modal .image-preview {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 12px;
+}
+
+.edit-obra-modal .preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+}
+
+.edit-obra-modal .remove-image-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.edit-obra-modal .preview-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+/* Image Upload */
+.edit-obra-modal .image-upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.edit-obra-modal .image-upload-area:hover {
+    border-color: #667eea;
+}
+
+.edit-obra-modal .image-input {
+    display: none;
+}
+
+.edit-obra-modal .upload-label {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.edit-obra-modal .upload-icon {
+    font-size: 2rem;
+}
+
+.edit-obra-modal .upload-main-text {
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+.edit-obra-modal .upload-sub-text {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 4px 0 0 0;
+}
+
+/* Error Message */
+.edit-obra-modal .error-message {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    color: #dc2626;
+}
+
+.edit-obra-modal .error-message svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Action Buttons */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.cancel-btn {
+    padding: 12px 24px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+.submit-btn {
+    padding: 12px 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    opacity: 0.9;
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.loading-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loading-spinner-small {
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+}
+

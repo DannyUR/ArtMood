@@ -1,0 +1,74 @@
+/* components/common/LoadingSpinner.css */
+.loading-spinner-container {
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner-container.full-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  padding: 0;
+}
+
+.spinner {
+  border: 4px solid rgba(243, 243, 243, 0.3);
+  border-top: 4px solid;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.spinner-text {
+  color: #666;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Variantes de color */
+.spinner.primary {
+  border-top-color: #6200ee;
+}
+
+.spinner.secondary {
+  border-top-color: #03dac6;
+}
+
+.spinner.accent {
+  border-top-color: #018786;
+}
+
+/* Variantes de tamaño */
+.spinner.small {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-width: 3px;
+}
+
+.spinner.medium {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-width: 4px;
+}
+
+.spinner.large {
+  width: 4rem;
+  height: 4rem;
+  border-width: 5px;
+}

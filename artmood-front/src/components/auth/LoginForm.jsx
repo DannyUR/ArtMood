@@ -1,6 +1,10 @@
+// components/auth/LoginForm.jsx - DISEÑO CREATIVO
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Button from '../ui/Button';
+import Card from '../ui/Card';
+import './Login.css';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
@@ -17,14 +21,12 @@ const LoginForm = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    // Limpiar error cuando el usuario empiece a escribir
     if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validaciones básicas
     if (!formData.email || !formData.password) {
       setError('Por favor completa todos los campos');
       return;
@@ -36,7 +38,6 @@ const LoginForm = () => {
     const result = await login(formData);
     
     if (result.success) {
-      // Redirigir según el rol
       if (result.user.role === 'admin') {
         navigate('/admin');
       } else {
@@ -50,88 +51,134 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 text-center">
-          Iniciar Sesión en ArtMood
-        </h3>
-        <p className="mt-2 text-sm text-gray-600 text-center">
-          Ingresa a tu cuenta para explorar y compartir arte
-        </p>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-          <strong>Error:</strong> {error}
+    <div className="login-container">
+      {/* Fondo animado con partículas */}
+      <div className="login-background">
+        <div className="floating-art-elements">
+          <div className="art-element element-1">🎨</div>
+          <div className="art-element element-2">✨</div>
+          <div className="art-element element-3">❤️</div>
+          <div className="art-element element-4">🌟</div>
+          <div className="art-element element-5">🖌️</div>
+          <div className="art-element element-6">🌈</div>
         </div>
-      )}
-
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Correo Electrónico
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="tu@email.com"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
+        <div className="gradient-overlay"></div>
       </div>
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-          Contraseña
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Tu contraseña"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
-      </div>
+      {/* Tarjeta de login */}
+      <div className="login-card-wrapper">
+        <Card className="login-card">
+          {/* Header decorativo */}
+          <div className="login-header">
+            <div className="logo-art">
+              <span className="logo-icon">🎨</span>
+              <h1 className="logo-text">ArtMood</h1>
+            </div>
+            <div className="welcome-message">
+              <h2>Bienvenido de vuelta</h2>
+              <p>Tu galería de emociones te espera</p>
+            </div>
+          </div>
 
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Iniciando sesión...
-            </>
-          ) : (
-            'Iniciar Sesión'
-          )}
-        </button>
-      </div>
+          {/* Formulario */}
+          <div className="login-form-container">
+            {error && (
+              <div className="error-message">
+                <span className="error-icon">⚠️</span>
+                <strong>Error:</strong> {error}
+              </div>
+            )}
 
-      <div className="text-center">
-        <span className="text-sm text-gray-600">
-          ¿No tienes cuenta?{' '}
-          <Link 
-            to="/register" 
-            className="font-medium text-purple-600 hover:text-purple-500 transition-colors"
-          >
-            Regístrate aquí
-          </Link>
-        </span>
+            <form onSubmit={handleSubmit} className="login-form">
+              {/* Campo Email */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                  />
+                  <label htmlFor="email" className="input-label">
+                    <span className="label-icon">📧</span>
+                    Correo Electrónico
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
+
+              {/* Campo Contraseña */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                  />
+                  <label htmlFor="password" className="input-label">
+                    <span className="label-icon">🔒</span>
+                    Contraseña
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
+
+              {/* Botón de login */}
+              <Button 
+                type="submit"
+                className="login-button-art"
+                loading={loading}
+                disabled={loading}
+              >
+                <span className="button-content">
+                  {loading ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Iniciando sesión...
+                    </>
+                  ) : (
+                    <>
+                      <span className="button-icon">🎨</span>
+                      Ingresar a mi galería
+                    </>
+                  )}
+                </span>
+              </Button>
+            </form>
+
+            {/* Enlace de registro */}
+            <div className="register-link-section">
+              <p className="register-text">
+                ¿Primera vez en ArtMood?{' '}
+                <Link to="/register" className="register-link">
+                  <span className="link-icon">🚀</span>
+                  Crear cuenta creativa
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Footer decorativo */}
+          <div className="login-footer">
+            <div className="security-note">
+              <span className="security-icon">🛡️</span>
+              Tu creatividad está segura con nosotros
+            </div>
+          </div>
+        </Card>
       </div>
-    </form>
+    </div>
   );
 };
 

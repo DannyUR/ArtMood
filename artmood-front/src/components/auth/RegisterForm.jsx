@@ -1,6 +1,10 @@
+// components/auth/RegisterForm.jsx - VERSIÓN CORREGIDA
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import Button from '../ui/Button';
+import Card from '../ui/Card';
+import './Register.css';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -60,141 +64,207 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 text-center">
-          Crear Cuenta en ArtMood
-        </h3>
-        <p className="mt-2 text-sm text-gray-600 text-center">
-          Únete a nuestra comunidad de arte digital
-        </p>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
-          <strong>Error:</strong> {error}
+    <div className="register-container">
+      {/* Fondo animado con partículas */}
+      <div className="register-background">
+        <div className="floating-art-elements">
+          <div className="art-element element-1">🎨</div>
+          <div className="art-element element-2">✨</div>
+          <div className="art-element element-3">❤️</div>
+          <div className="art-element element-4">🌟</div>
+          <div className="art-element element-5">🖌️</div>
+          <div className="art-element element-6">🌈</div>
+          <div className="art-element element-7">👨‍🎨</div>
+          <div className="art-element element-8">👩‍🎨</div>
         </div>
-      )}
-
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-          Nombre Completo
-        </label>
-        <input
-          id="name"
-          name="name"
-          type="text"
-          required
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Tu nombre completo"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
+        <div className="gradient-overlay"></div>
       </div>
 
-      <div>
-        <label htmlFor="nickname" className="block text-sm font-medium text-gray-700 mb-1">
-          Nombre de Usuario
-        </label>
-        <input
-          id="nickname"
-          name="nickname"
-          type="text"
-          required
-          value={formData.nickname}
-          onChange={handleChange}
-          placeholder="Tu nombre de usuario único"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
-      </div>
+      {/* Tarjeta de registro */}
+      <div className="register-card-wrapper">
+        <Card className="register-card">
+          {/* Header decorativo */}
+          <div className="register-header">
+            <div className="logo-art">
+              <span className="logo-icon">🎨</span>
+              <h1 className="logo-text">ArtMood</h1>
+            </div>
+            <div className="welcome-message">
+              <h2>Únete a la comunidad</h2>
+              <p>Crea tu perfil de artista digital</p>
+            </div>
+          </div>
 
-      <div>
-        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-          Correo Electrónico
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="tu@email.com"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
-      </div>
+          {/* Formulario */}
+          <div className="register-form-container">
+            {error && (
+              <div className="error-message">
+                <span className="error-icon">⚠️</span>
+                <strong>Error:</strong> {error}
+              </div>
+            )}
 
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-          Contraseña
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Mínimo 6 caracteres"
-          minLength="6"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
-      </div>
+            <form onSubmit={handleSubmit} className="register-form">
+              {/* Campo Nombre Completo */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                  />
+                  <label htmlFor="name" className="input-label">
+                    <span className="label-icon">👤</span>
+                    Nombre Completo
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
 
-      <div>
-        <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-1">
-          Confirmar Contraseña
-        </label>
-        <input
-          id="password_confirmation"
-          name="password_confirmation"
-          type="password"
-          required
-          value={formData.password_confirmation}
-          onChange={handleChange}
-          placeholder="Repite tu contraseña"
-          minLength="6"
-          className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-          disabled={loading}
-        />
-      </div>
+              {/* Campo Nombre de Usuario */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="nickname"
+                    name="nickname"
+                    type="text"
+                    required
+                    value={formData.nickname}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                  />
+                  <label htmlFor="nickname" className="input-label">
+                    <span className="label-icon">🎭</span>
+                    Nombre de Usuario
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
 
-      <div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Creando cuenta...
-            </>
-          ) : (
-            'Registrarse'
-          )}
-        </button>
-      </div>
+              {/* Campo Email */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                  />
+                  <label htmlFor="email" className="input-label">
+                    <span className="label-icon">📧</span>
+                    Correo Electrónico
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
 
-      <div className="text-center">
-        <span className="text-sm text-gray-600">
-          ¿Ya tienes cuenta?{' '}
-          <Link 
-            to="/login" 
-            className="font-medium text-purple-600 hover:text-purple-500 transition-colors"
-          >
-            Inicia sesión aquí
-          </Link>
-        </span>
+              {/* Campo Contraseña */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                    minLength="6"
+                  />
+                  <label htmlFor="password" className="input-label">
+                    <span className="label-icon">🔒</span>
+                    Contraseña
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+                <div className="password-hint">
+                  Mínimo 6 caracteres
+                </div>
+              </div>
+
+              {/* Campo Confirmar Contraseña */}
+              <div className="form-group-art">
+                <div className="input-container">
+                  <input
+                    id="password_confirmation"
+                    name="password_confirmation"
+                    type="password"
+                    required
+                    value={formData.password_confirmation}
+                    onChange={handleChange}
+                    placeholder=" "
+                    className="form-input-art"
+                    disabled={loading}
+                    minLength="6"
+                  />
+                  <label htmlFor="password_confirmation" className="input-label">
+                    <span className="label-icon">✅</span>
+                    Confirmar Contraseña
+                  </label>
+                  <div className="input-underline"></div>
+                </div>
+              </div>
+
+              {/* Botón de registro */}
+              <Button 
+                type="submit"
+                className="register-button"
+                loading={loading}
+                disabled={loading}
+              >
+                <span className="button-content">
+                  {loading ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Creando tu cuenta...
+                    </>
+                  ) : (
+                    <>
+                      <span className="button-icon">🚀</span>
+                      Crear mi cuenta creativa
+                    </>
+                  )}
+                </span>
+              </Button>
+            </form>
+
+            {/* Enlace de login */}
+            <div className="login-link-section">
+              <p className="login-text">
+                ¿Ya eres parte de ArtMood?{' '}
+                <Link to="/login" className="login-link">
+                  <span className="link-icon">🎨</span>
+                  Iniciar sesión aquí
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          {/* Footer decorativo */}
+          <div className="register-footer">
+            <div className="security-note">
+              <span className="security-icon">🛡️</span>
+              Comienza tu viaje artístico con nosotros
+            </div>
+          </div>
+        </Card>
       </div>
-    </form>
+    </div>
   );
 };
 

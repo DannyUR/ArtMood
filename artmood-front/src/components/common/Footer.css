@@ -1,0 +1,220 @@
+/* components/common/Footer.css - DISEÑO CREATIVO */
+.main-footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: white;
+  padding: 3rem 0 1.5rem;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.main-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Footer Links - Diseño mejorado */
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+.footer-section {
+  text-align: center;
+}
+
+.footer-section h4 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  position: relative;
+  display: inline-block;
+}
+
+.footer-section h4::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 2px;
+}
+
+.footer-link {
+  display: block;
+  color: #b0b8d0;
+  text-decoration: none;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  padding: 0.3rem 0;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+  transform: translateX(8px);
+}
+
+.footer-link::before {
+  content: '🎨';
+  position: absolute;
+  left: -25px;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.footer-link:hover::before {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* Línea separadora creativa */
+.footer-divider {
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(102, 126, 234, 0.6) 25%, 
+    rgba(118, 75, 162, 0.8) 50%, 
+    rgba(102, 126, 234, 0.6) 75%, 
+    transparent 100%
+  );
+  margin: 2rem 0;
+  position: relative;
+}
+
+.footer-divider::after {
+  content: '✨';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #1a1a2e;
+  padding: 0 1rem;
+  font-size: 1.2rem;
+}
+
+/* Footer Bottom - Diseño mejorado */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+}
+
+.copyright {
+  font-size: 1rem;
+  color: #b0b8d0;
+  margin: 0;
+  font-weight: 500;
+}
+
+.developers {
+  font-size: 0.95rem;
+  color: #8b98b8;
+  margin: 0;
+  font-weight: 400;
+}
+
+.developers:hover {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+/* Efectos de partículas decorativas */
+.main-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Efecto de brillo en hover para secciones */
+.footer-section {
+  padding: 1.5rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.footer-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación sutil para el copyright */
+.copyright {
+  position: relative;
+  overflow: hidden;
+}
+
+.copyright::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.copyright:hover::before {
+  left: 100%;
+}
+
+/* Efecto de gradiente animado en los títulos */
+.footer-section h4 {
+  background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Iconos sociales con efecto */
+.footer-section:nth-child(3) .footer-link::before {
+  content: '' !important; /* Elimina el emoji por defecto para redes sociales */
+}
+
+.footer-section:nth-child(3) .footer-link:nth-child(2)::before { content: '📷'; }
+.footer-section:nth-child(3) .footer-link:nth-child(3)::before { content: '🐦'; }
+.footer-section:nth-child(3) .footer-link:nth-child(4)::before { content: '💬'; }

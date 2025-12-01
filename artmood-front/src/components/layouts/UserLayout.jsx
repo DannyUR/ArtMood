@@ -1,12 +1,11 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import Navbar from '../common/Navbar';
+import Footer from '../common/Footer';
 
 const UserLayout = () => {
   const { user, loading } = useAuth();
 
-  // Mostrar loading mientras se verifica la autenticación
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -15,7 +14,6 @@ const UserLayout = () => {
     );
   }
 
-  // Si no está autenticado o es admin, redirigir
   if (!user) {
     return <Navigate to="/login" replace />;
   }
@@ -25,11 +23,13 @@ const UserLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <main className="container mx-auto px-4 py-8">
-        <Outlet />
-      </main>
+    <div className="main-content"> {/* ← CAMBIA esta línea */}
+      <div className="min-h-screen bg-gray-100">
+        <main className="container mx-auto px-4 py-8">
+          <Outlet />
+        </main>
+      </div>
+      <Footer />
     </div>
   );
 };

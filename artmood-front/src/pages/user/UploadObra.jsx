@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { obraService } from '../../services/obraService';
 import { categoryService } from '../../services/categoryService';
 import { emotionService } from '../../services/emotionService';
+import './UploadObra.css'; // Archivo CSS para los estilos
 
 const UploadObra = () => {
   const { user } = useAuth();
@@ -54,13 +55,11 @@ const UploadObra = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validar tipo de archivo
       if (!file.type.startsWith('image/')) {
         setError('Por favor selecciona un archivo de imagen válido');
         return;
       }
 
-      // Validar tamaño (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError('La imagen debe ser menor a 5MB');
         return;
@@ -71,7 +70,6 @@ const UploadObra = () => {
         image: file
       }));
 
-      // Crear preview
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrl(e.target.result);
@@ -86,7 +84,6 @@ const UploadObra = () => {
     console.log('Usuario completo:', user);
     console.log('ID del usuario:', user?.id, user?.id_usuario);
 
-    // Validaciones
     if (!formData.title.trim()) {
       setError('El título es obligatorio');
       return;
@@ -97,7 +94,6 @@ const UploadObra = () => {
       return;
     }
 
-    // Verificar que tenemos el ID del usuario
     if (!user || (!user.id && !user.id_usuario)) {
       setError('No se pudo obtener la información del usuario. Por favor, inicia sesión nuevamente.');
       return;
@@ -107,12 +103,10 @@ const UploadObra = () => {
     setError('');
 
     try {
-      // Usar el campo correcto del ID del usuario
       const userId = user.id_usuario || user.id;
 
       console.log('ID de usuario a enviar:', userId);
 
-      // Crear FormData para enviar la imagen
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
       formDataToSend.append('description', formData.description);
@@ -126,11 +120,9 @@ const UploadObra = () => {
         formDataToSend.append('id_emocion', formData.id_emocion);
       }
 
-      // Asegurarse de que la imagen se está agregando correctamente
       console.log('Archivo de imagen:', formData.image);
       formDataToSend.append('image', formData.image);
 
-      // Debug: mostrar qué hay en el FormData
       console.log('FormData contenido:');
       for (let pair of formDataToSend.entries()) {
         console.log(pair[0] + ': ', pair[1]);
@@ -142,17 +134,14 @@ const UploadObra = () => {
         image: formData.image.name
       });
 
-      // Enviar a la API
       const response = await obraService.create(formDataToSend);
 
-      // Éxito
       alert('¡Obra publicada exitosamente!');
       navigate('/user');
 
     } catch (error) {
       console.error('Error creando obra:', error);
 
-      // Mostrar errores detallados de validación
       if (error.response?.status === 422) {
         const validationErrors = error.response.data?.errors || error.response.data;
         let errorMessages = '';
@@ -185,78 +174,93 @@ const UploadObra = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Publicar Nueva Obra
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Comparte tu arte con la comunidad ArtMood
-        </p>
+    <div className="upload-obra-container">
+      {/* Header */}
+      <div className="upload-header">
+        <div className="header-content">
+          <h1 className="upload-title">
+            Publicar Nueva Obra
+          </h1>
+          <p className="upload-subtitle">
+            Comparte tu arte con la comunidad ArtMood
+          </p>
+        </div>
+        <div className="upload-steps">
+          <div className="step active">
+            <span className="step-number">1</span>
+            <span className="step-text">Subir obra</span>
+          </div>
+          <div className="step">
+            <span className="step-number">2</span>
+            <span className="step-text">Compartir</span>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-lg p-6">
+      {/* Form Container */}
+      <div className="form-container">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-            <strong>Error:</strong> {error}
+          <div className="error-message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" strokeWidth="2"/>
+            </svg>
+            <div>
+              <strong>Error:</strong> {error}
+            </div>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Preview de imagen */}
-          {previewUrl && (
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-              <div className="relative inline-block">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-h-64 max-w-full rounded-lg shadow-md"
-                />
-                <button
-                  type="button"
-                  onClick={removeImage}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
-                >
-                  ×
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">
-                Vista previa de tu obra
-              </p>
-            </div>
-          )}
-
-          {/* Campo de imagen */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+        <form onSubmit={handleSubmit} className="upload-form">
+          {/* Image Upload Section */}
+          <div className="form-section">
+            <label className="section-label">
               Imagen de la Obra *
             </label>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-400 transition-colors">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-                id="image-upload"
-              />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer block"
-              >
-                <div className="text-4xl mb-2">📸</div>
-                <p className="text-lg font-medium text-gray-900">
-                  {previewUrl ? 'Cambiar imagen' : 'Seleccionar imagen'}
-                </p>
-                <p className="text-sm text-gray-500 mt-1">
-                  PNG, JPG, JPEG hasta 5MB
-                </p>
-              </label>
-            </div>
+            
+            {previewUrl ? (
+              <div className="image-preview-container">
+                <div className="image-preview">
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="preview-image"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="remove-image-btn"
+                    title="Eliminar imagen"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 18L18 6M6 6L18 18" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </button>
+                </div>
+                <p className="preview-text">Vista previa de tu obra</p>
+              </div>
+            ) : (
+              <div className="image-upload-area">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="image-input"
+                  id="image-upload"
+                />
+                <label htmlFor="image-upload" className="upload-label">
+                  <div className="upload-icon">🖼️</div>
+                  <div className="upload-text">
+                    <p className="upload-main-text">Seleccionar imagen</p>
+                    <p className="upload-sub-text">PNG, JPG, JPEG hasta 5MB</p>
+                  </div>
+                </label>
+              </div>
+            )}
           </div>
 
-          {/* Campo título */}
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Title Field */}
+          <div className="form-section">
+            <label htmlFor="title" className="section-label">
               Título de la Obra *
             </label>
             <input
@@ -266,18 +270,18 @@ const UploadObra = () => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Ej: Atardecer en la montaña"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="form-input"
               maxLength={150}
               disabled={loading}
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <div className="char-counter">
               {formData.title.length}/150 caracteres
-            </p>
+            </div>
           </div>
 
-          {/* Campo descripción */}
-          <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Description Field */}
+          <div className="form-section">
+            <label htmlFor="description" className="section-label">
               Descripción
             </label>
             <textarea
@@ -287,16 +291,15 @@ const UploadObra = () => {
               onChange={handleInputChange}
               placeholder="Describe tu obra, inspiración, técnica utilizada..."
               rows={4}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 resize-none"
+              className="form-textarea"
               disabled={loading}
             />
           </div>
 
-          {/* Selectores de categoría y emoción */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Categoría */}
-            <div>
-              <label htmlFor="id_categoria" className="block text-sm font-medium text-gray-700 mb-2">
+          {/* Category and Emotion Selectors */}
+          <div className="form-grid">
+            <div className="form-section">
+              <label htmlFor="id_categoria" className="section-label">
                 Categoría
               </label>
               <select
@@ -304,7 +307,7 @@ const UploadObra = () => {
                 name="id_categoria"
                 value={formData.id_categoria}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="form-select"
                 disabled={loading}
               >
                 <option value="">Seleccionar categoría</option>
@@ -316,9 +319,8 @@ const UploadObra = () => {
               </select>
             </div>
 
-            {/* Emoción */}
-            <div>
-              <label htmlFor="id_emocion" className="block text-sm font-medium text-gray-700 mb-2">
+            <div className="form-section">
+              <label htmlFor="id_emocion" className="section-label">
                 Emoción
               </label>
               <select
@@ -326,7 +328,7 @@ const UploadObra = () => {
                 name="id_emocion"
                 value={formData.id_emocion}
                 onChange={handleInputChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="form-select"
                 disabled={loading}
               >
                 <option value="">Seleccionar emoción</option>
@@ -339,28 +341,26 @@ const UploadObra = () => {
             </div>
           </div>
 
-          {/* Información del artista */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">Publicar como:</h3>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-purple-600 text-sm font-medium">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </span>
+          {/* Artist Info */}
+          <div className="artist-info">
+            <h3 className="artist-label">Publicar como:</h3>
+            <div className="artist-details">
+              <div className="artist-avatar">
+                {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500">@{user?.nickname}</p>
+              <div className="artist-text">
+                <p className="artist-name">{user?.name}</p>
+                <p className="artist-handle">@{user?.nickname}</p>
               </div>
             </div>
           </div>
 
-          {/* Botones de acción */}
-          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+          {/* Action Buttons */}
+          <div className="action-buttons">
             <button
               type="button"
               onClick={() => navigate('/user')}
-              className="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
+              className="cancel-btn"
               disabled={loading}
             >
               Cancelar
@@ -368,33 +368,38 @@ const UploadObra = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="submit-btn"
             >
               {loading ? (
-                <div className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                <div className="loading-content">
+                  <div className="loading-spinner"></div>
                   Publicando...
                 </div>
               ) : (
-                'Publicar Obra'
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 9L11 13" stroke="currentColor" strokeWidth="2"/>
+                  </svg>
+                  Publicar Obra
+                </>
               )}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Información de ayuda */}
-      <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-sm font-medium text-blue-900 mb-2">💡 Consejos para una buena publicación:</h3>
-        <ul className="text-sm text-blue-800 space-y-1">
-          <li>• Usa un título descriptivo y atractivo</li>
-          <li>• Selecciona una imagen de alta calidad</li>
-          <li>• Describe tu proceso creativo o inspiración</li>
-          <li>• Elige categorías y emociones que representen tu obra</li>
-        </ul>
+      {/* Help Information */}
+      <div className="help-section">
+        <div className="help-icon">💡</div>
+        <div className="help-content">
+          <h3 className="help-title">Consejos para una buena publicación</h3>
+          <ul className="help-list">
+            <li>Usa un título descriptivo y atractivo</li>
+            <li>Selecciona una imagen de alta calidad</li>
+            <li>Describe tu proceso creativo o inspiración</li>
+            <li>Elige categorías y emociones que representen tu obra</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

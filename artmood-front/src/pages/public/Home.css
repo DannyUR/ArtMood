@@ -1,0 +1,419 @@
+/* Home.css con prefijo home- (SIN RESPONSIVE - SOLO LAPTOP) */
+
+.home-container {
+  min-height: 100vh;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Hero Section */
+.home-hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  position: relative;
+  overflow: hidden;
+  padding: 2rem 0;
+  margin-top: 0;
+}
+
+.home-hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.home-floating-shapes {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.home-shape {
+  position: absolute;
+  font-size: 4rem;
+  opacity: 0.1;
+  animation: home-float 8s ease-in-out infinite;
+}
+
+.home-shape-1 {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.home-shape-2 {
+  top: 60%;
+  left: 80%;
+  animation-delay: 2s;
+}
+
+.home-shape-3 {
+  top: 80%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+.home-shape-4 {
+  top: 30%;
+  left: 70%;
+  animation-delay: 6s;
+}
+
+@keyframes home-float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-30px) rotate(10deg); 
+  }
+}
+
+.home-hero-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.home-hero-content {
+  max-width: 800px;
+  margin-bottom: 3rem;
+}
+
+.home-hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.home-hero-title {
+  font-size: 4.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.home-gradient-text {
+  background: linear-gradient(45deg, #ffd89b, #19547b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-hero-subtitle {
+  font-size: 1.5rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+/* Welcome Messages */
+.home-user-welcome,
+.home-guest-welcome {
+  margin-top: 2rem;
+}
+
+.home-welcome-message {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.home-welcome-text {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+.home-guest-text {
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  font-weight: 300;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Action Buttons */
+.home-action-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+/* Button Styles */
+.home-gallery-btn,
+.home-primary-btn,
+.home-cta-button {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #667eea !important;
+  border: none !important;
+  padding: 1rem 2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+  min-width: 180px;
+}
+
+.home-gallery-btn:hover,
+.home-primary-btn:hover,
+.home-cta-button:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
+  background: white !important;
+}
+
+.home-upload-btn,
+.home-secondary-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  padding: 1rem 2rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s ease !important;
+  min-width: 180px;
+}
+
+.home-upload-btn:hover,
+.home-secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-3px) !important;
+}
+
+/* Hero Stats */
+.home-hero-stats {
+  display: flex;
+  gap: 4rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  padding: 2.5rem 3rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: fit-content;
+}
+
+.home-stat-item {
+  text-align: center;
+  flex: 1;
+  min-width: 140px;
+}
+
+.home-stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(45deg, #ffd89b, #19547b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Features Section */
+.home-features-section {
+  padding: 5rem 0;
+  background: #ffffff;
+  text-align: center;
+}
+
+.home-section-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.home-section-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+.home-section-subtitle {
+  font-size: 1.3rem;
+  color: #4b5563;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.home-features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.home-feature-card {
+  text-align: center;
+  padding: 3rem 2rem !important;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.4s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.home-feature-card:hover {
+  transform: translateY(-10px) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+.home-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.home-feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.home-feature-icon-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.home-feature-icon {
+  font-size: 4rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.home-feature-card:hover .home-feature-icon {
+  transform: scale(1.1);
+}
+
+.home-feature-card h3 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.home-feature-card p {
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.home-feature-arrow {
+  font-size: 1.5rem;
+  color: #7c3aed;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.home-feature-card:hover .home-feature-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* CTA Section */
+.home-cta-section {
+  padding: 4rem 0 2rem 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.home-cta-card {
+  text-align: center;
+  padding: 3rem 2rem !important;
+  border: none !important;
+  border-radius: 20px !important;
+  background: white !important;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1) !important;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.home-cta-card h2 {
+  color: #1f2937;
+  margin-bottom: 1rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.home-cta-card p {
+  color: #4b5563;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+/* Centrado específico */
+.home-action-buttons {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.home-guest-welcome .home-action-buttons,
+.home-user-welcome .home-action-buttons {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.home-hero-content {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+}

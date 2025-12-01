@@ -1,81 +1,190 @@
 import React from 'react';
 import CommentsSection from '../comments/CommentsSection';
+import './ObraDetailModal.css';
 
 const ObraDetailModal = ({ obra, isOpen, onClose }) => {
   if (!isOpen || !obra) return null;
 
+  // Función para formatear la fecha correctamente
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Fecha no disponible';
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">{obra.title}</h2>
+    <div className="gallery-modal-overlay" onClick={onClose}>
+      <div 
+        className="gallery-modal-content" 
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header del Modal */}
+        <div className="gallery-modal-header">
+          <div className="gallery-modal-header-content">
+            <h2 className="gallery-modal-title">{obra.title}</h2>
+            <p className="gallery-modal-subtitle">
+              Una obra creada con ❤️ por nuestra comunidad
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 text-2xl"
+            className="gallery-modal-close-btn"
           >
-            ×
+            <span className="gallery-modal-close-icon">×</span>
           </button>
         </div>
 
-        {/* Contenido */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Imagen */}
-            <div>
+        {/* Contenido Principal */}
+        <div className="gallery-modal-body">
+          <div className="gallery-modal-obra-layout">
+            {/* Sección de Imagen */}
+            <div className="gallery-modal-image-section">
               {obra.imagen ? (
-                <img
-                  src={`http://localhost:8000/storage/${obra.imagen}`}
-                  alt={obra.title}
-                  className="w-full h-64 lg:h-96 object-cover rounded-lg"
-                />
+                <div className="gallery-modal-image-container">
+                  <img
+                    src={`http://localhost:8000/storage/${obra.imagen}`}
+                    alt={obra.title}
+                    className="gallery-modal-obra-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="gallery-modal-image-fallback">
+                    <span className="gallery-modal-fallback-icon">🎨</span>
+                    <p>Imagen no disponible</p>
+                  </div>
+                </div>
               ) : (
-                <div className="w-full h-64 lg:h-96 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center">
-                  <span className="text-white text-4xl">🎨</span>
+                <div className="gallery-modal-image-placeholder">
+                  <span className="gallery-modal-placeholder-icon">🖼️</span>
+                  <p>Sin imagen</p>
                 </div>
               )}
+              
+              {/* Efectos visuales */}
+              <div className="gallery-modal-image-overlay">
+                <div className="gallery-modal-overlay-badge">
+                  <span className="gallery-modal-badge-icon">✨</span>
+                  <span>Obra Destacada</span>
+                </div>
+              </div>
             </div>
 
-            {/* Información */}
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900">Descripción</h3>
-                <p className="text-gray-600 mt-1">
-                  {obra.description || 'Sin descripción'}
+            {/* Sección de Información */}
+            <div className="gallery-modal-info-section">
+              {/* Header de información */}
+              <div className="gallery-modal-info-header">
+                <div className="gallery-modal-artist-info">
+                  <div className="gallery-modal-artist-avatar">
+                    {obra.user?.nickname?.charAt(0)?.toUpperCase() || 'A'}
+                  </div>
+                  <div className="gallery-modal-artist-details">
+                    <h3 className="gallery-modal-artist-name">
+                      {obra.user?.nickname || 'Artista Anónimo'}
+                    </h3>
+                    <p className="gallery-modal-artist-role">Creador de la obra</p>
+                  </div>
+                </div>
+                <div className="gallery-modal-action-buttons">
+                  <button className="gallery-modal-action-btn gallery-modal-like-btn">
+                    <span className="gallery-modal-btn-icon">❤️</span>
+                    <span className="gallery-modal-btn-text">Me gusta</span>
+                  </button>
+                  <button className="gallery-modal-action-btn gallery-modal-share-btn">
+                    <span className="gallery-modal-btn-icon">↗️</span>
+                    <span className="gallery-modal-btn-text">Compartir</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Descripción */}
+              <div className="gallery-modal-description-section">
+                <h4 className="gallery-modal-section-title">
+                  <span className="gallery-modal-title-icon">📝</span>
+                  Descripción
+                </h4>
+                <p className="gallery-modal-description-text">
+                  {obra.description || 'El artista no ha proporcionado una descripción para esta obra.'}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Artista</h4>
-                  <p className="text-gray-600">@{obra.user?.nickname || 'Anónimo'}</p>
+              {/* Metadatos */}
+              <div className="gallery-modal-metadata-grid">
+                <div className="gallery-modal-metadata-item">
+                  <div className="gallery-modal-metadata-icon">📅</div>
+                  <div className="gallery-modal-metadata-content">
+                    <span className="gallery-modal-metadata-label">Publicado</span>
+                    <span className="gallery-modal-metadata-value">
+                      {formatDate(obra.fecha_publicacion)}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="text-sm font-medium text-gray-900">Publicado</h4>
-                  <p className="text-gray-600">
-                    {new Date(obra.fecha_publicacion).toLocaleDateString()}
-                  </p>
+
+                <div className="gallery-modal-metadata-item">
+                  <div className="gallery-modal-metadata-icon">🏷️</div>
+                  <div className="gallery-modal-metadata-content">
+                    <span className="gallery-modal-metadata-label">Categoría</span>
+                    <span className="gallery-modal-metadata-value">
+                      {obra.categoria?.name || 'Sin categoría'}
+                    </span>
+                  </div>
+                </div>
+
+                {obra.emotion && (
+                  <div className="gallery-modal-metadata-item">
+                    <div className="gallery-modal-metadata-icon">😊</div>
+                    <div className="gallery-modal-metadata-content">
+                      <span className="gallery-modal-metadata-label">Emoción</span>
+                      <span className="gallery-modal-metadata-value">
+                        {obra.emotion.icon} {obra.emotion.name}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="gallery-modal-metadata-item">
+                  <div className="gallery-modal-metadata-icon">🆔</div>
+                  <div className="gallery-modal-metadata-content">
+                    <span className="gallery-modal-metadata-label">ID de Obra</span>
+                    <span className="gallery-modal-metadata-value">#{obra.id_obra}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Categoría y Emoción */}
-              <div className="flex space-x-2">
-                {obra.id_categoria && (
-                  <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded text-sm">
-                    {obra.categoria?.name || 'Categoría'}
-                  </span>
-                )}
-                {obra.emotion && (
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-sm">
-                    {obra.emotion.icon} {obra.emotion.name}
-                  </span>
-                )}
+              {/* Etiquetas */}
+              <div className="gallery-modal-tags-section">
+                <h4 className="gallery-modal-section-title">
+                  <span className="gallery-modal-title-icon">🏷️</span>
+                  Etiquetas
+                </h4>
+                <div className="gallery-modal-tags-container">
+                  {obra.id_categoria && (
+                    <span className="gallery-modal-tag gallery-modal-tag-category">
+                      {obra.categoria?.name || 'Categoría'}
+                    </span>
+                  )}
+                  {obra.emotion && (
+                    <span className="gallery-modal-tag gallery-modal-tag-emotion">
+                      {obra.emotion.icon} {obra.emotion.name}
+                    </span>
+                  )}
+                  <span className="gallery-modal-tag gallery-modal-tag-digital">Arte Digital</span>
+                  <span className="gallery-modal-tag gallery-modal-tag-community">Comunidad</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Sección de comentarios */}
-          <div className="mt-8">
+          {/* Sección de Comentarios */}
+          <div className="gallery-modal-comments-section">
             <CommentsSection obraId={obra.id_obra} />
           </div>
         </div>
