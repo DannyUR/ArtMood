@@ -186,17 +186,17 @@ const EditObra = () => {
 
     if (loading) {
         return (
-            <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p className="loading-text">Cargando obra...</p>
+            <div className="edito-loading-container">
+                <div className="edito-loading-spinner"></div>
+                <p className="edito-loading-text">Cargando obra...</p>
             </div>
         );
     }
 
     if (error && !obra) {
         return (
-            <div className="edit-obra-container">
-                <div className="error-message">
+            <div className="edito-container">
+                <div className="edito-error-message">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                         <path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" strokeWidth="2"/>
                     </svg>
@@ -206,7 +206,7 @@ const EditObra = () => {
                 </div>
                 <button
                     onClick={() => navigate('/user/my-obras')}
-                    className="back-btn"
+                    className="edito-back-btn"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                         <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2"/>
@@ -218,31 +218,31 @@ const EditObra = () => {
     }
 
     return (
-        <div className="edit-obra-container">
+        <div className="edito-container">
             {/* Header Section */}
-            <div className="edit-obra-header">
-                <div className="header-content">
-                    <h1 className="page-title">Editar Obra</h1>
-                    <p className="page-subtitle">
+            <div className="edito-header">
+                <div className="edito-header-content">
+                    <h1 className="edito-page-title">Editar Obra</h1>
+                    <p className="edito-page-subtitle">
                         Actualiza los detalles de "{obra?.title}"
                     </p>
                 </div>
-                <div className="edit-steps">
-                    <div className="step active">
-                        <span className="step-number">1</span>
-                        <span className="step-text">Editar obra</span>
+                <div className="edito-steps">
+                    <div className="edito-step active">
+                        <span className="edito-step-number">1</span>
+                        <span className="edito-step-text">Editar obra</span>
                     </div>
-                    <div className="step">
-                        <span className="step-number">2</span>
-                        <span className="step-text">Guardar cambios</span>
+                    <div className="edito-step">
+                        <span className="edito-step-number">2</span>
+                        <span className="edito-step-text">Guardar cambios</span>
                     </div>
                 </div>
             </div>
 
             {/* Form Container */}
-            <div className="form-container">
+            <div className="edito-form-container">
                 {error && (
-                    <div className="error-message">
+                    <div className="edito-error-message">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" strokeWidth="2"/>
                         </svg>
@@ -252,25 +252,25 @@ const EditObra = () => {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="edit-form">
+                <form onSubmit={handleSubmit} className="edito-form">
                     {/* Image Section */}
-                    <div className="form-section">
-                        <label className="section-label">
+                    <div className="edito-form-section">
+                        <label className="edito-section-label">
                             Cambiar Imagen (opcional)
                         </label>
                         
                         {previewUrl ? (
-                            <div className="image-preview-container">
-                                <div className="image-preview">
+                            <div className="edito-image-preview-container">
+                                <div className="edito-image-preview">
                                     <img
                                         src={previewUrl}
                                         alt="Preview"
-                                        className="preview-image"
+                                        className="edito-preview-image"
                                     />
                                     <button
                                         type="button"
                                         onClick={removeImage}
-                                        className="remove-image-btn"
+                                        className="edito-remove-image-btn"
                                         title="Restaurar imagen original"
                                     >
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -278,24 +278,24 @@ const EditObra = () => {
                                         </svg>
                                     </button>
                                 </div>
-                                <p className="preview-text">
+                                <p className="edito-preview-text">
                                     {formData.image ? 'Nueva imagen seleccionada' : 'Imagen actual'}
                                 </p>
                             </div>
                         ) : (
-                            <div className="image-upload-area">
+                            <div className="edito-image-upload-area">
                                 <input
                                     type="file"
                                     accept="image/*"
                                     onChange={handleImageChange}
-                                    className="image-input"
-                                    id="image-upload"
+                                    className="edito-image-input"
+                                    id="edito-image-upload"
                                 />
-                                <label htmlFor="image-upload" className="upload-label">
-                                    <div className="upload-icon">🔄</div>
-                                    <div className="upload-text">
-                                        <p className="upload-main-text">Seleccionar nueva imagen</p>
-                                        <p className="upload-sub-text">PNG, JPG, JPEG hasta 5MB</p>
+                                <label htmlFor="edito-image-upload" className="edito-upload-label">
+                                    <div className="edito-upload-icon">🔄</div>
+                                    <div className="edito-upload-text">
+                                        <p className="edito-upload-main-text">Seleccionar nueva imagen</p>
+                                        <p className="edito-upload-sub-text">PNG, JPG, JPEG hasta 5MB</p>
                                     </div>
                                 </label>
                             </div>
@@ -303,8 +303,8 @@ const EditObra = () => {
                     </div>
 
                     {/* Title Field */}
-                    <div className="form-section">
-                        <label htmlFor="title" className="section-label">
+                    <div className="edito-form-section">
+                        <label htmlFor="title" className="edito-section-label">
                             Título de la Obra *
                         </label>
                         <input
@@ -314,18 +314,18 @@ const EditObra = () => {
                             value={formData.title}
                             onChange={handleInputChange}
                             placeholder="Ej: Atardecer en la montaña"
-                            className="form-input"
+                            className="edito-form-input"
                             maxLength={150}
                             disabled={saving}
                         />
-                        <div className="char-counter">
+                        <div className="edito-char-counter">
                             {formData.title.length}/150 caracteres
                         </div>
                     </div>
 
                     {/* Description Field */}
-                    <div className="form-section">
-                        <label htmlFor="description" className="section-label">
+                    <div className="edito-form-section">
+                        <label htmlFor="description" className="edito-section-label">
                             Descripción
                         </label>
                         <textarea
@@ -335,15 +335,15 @@ const EditObra = () => {
                             onChange={handleInputChange}
                             placeholder="Describe tu obra, inspiración, técnica utilizada..."
                             rows={4}
-                            className="form-textarea"
+                            className="edito-form-textarea"
                             disabled={saving}
                         />
                     </div>
 
                     {/* Category and Emotion Selectors */}
-                    <div className="form-grid">
-                        <div className="form-section">
-                            <label htmlFor="id_categoria" className="section-label">
+                    <div className="edito-form-grid">
+                        <div className="edito-form-section">
+                            <label htmlFor="id_categoria" className="edito-section-label">
                                 Categoría
                             </label>
                             <select
@@ -351,7 +351,7 @@ const EditObra = () => {
                                 name="id_categoria"
                                 value={formData.id_categoria}
                                 onChange={handleInputChange}
-                                className="form-select"
+                                className="edito-form-select"
                                 disabled={saving}
                             >
                                 <option value="">Sin categoría</option>
@@ -363,8 +363,8 @@ const EditObra = () => {
                             </select>
                         </div>
 
-                        <div className="form-section">
-                            <label htmlFor="id_emocion" className="section-label">
+                        <div className="edito-form-section">
+                            <label htmlFor="id_emocion" className="edito-section-label">
                                 Emoción
                             </label>
                             <select
@@ -372,7 +372,7 @@ const EditObra = () => {
                                 name="id_emocion"
                                 value={formData.id_emocion}
                                 onChange={handleInputChange}
-                                className="form-select"
+                                className="edito-form-select"
                                 disabled={saving}
                             >
                                 <option value="">Sin emoción</option>
@@ -386,36 +386,36 @@ const EditObra = () => {
                     </div>
 
                     {/* Obra Information */}
-                    <div className="obra-info">
-                        <h3 className="info-label">Información de la obra</h3>
-                        <div className="info-grid">
-                            <div className="info-item">
-                                <span className="info-label-small">ID:</span>
-                                <span className="info-value">{obra?.id_obra}</span>
+                    <div className="edito-obra-info">
+                        <h3 className="edito-info-label">Información de la obra</h3>
+                        <div className="edito-info-grid">
+                            <div className="edito-info-item">
+                                <span className="edito-info-label-small">ID:</span>
+                                <span className="edito-info-value">{obra?.id_obra}</span>
                             </div>
-                            <div className="info-item">
-                                <span className="info-label-small">Publicada:</span>
-                                <span className="info-value">
+                            <div className="edito-info-item">
+                                <span className="edito-info-label-small">Publicada:</span>
+                                <span className="edito-info-value">
                                     {obra && new Date(obra.fecha_publicacion).toLocaleDateString()}
                                 </span>
                             </div>
-                            <div className="info-item">
-                                <span className="info-label-small">Artista:</span>
-                                <span className="info-value">{user?.name}</span>
+                            <div className="edito-info-item">
+                                <span className="edito-info-label-small">Artista:</span>
+                                <span className="edito-info-value">{user?.name}</span>
                             </div>
-                            <div className="info-item">
-                                <span className="info-label-small">Usuario:</span>
-                                <span className="info-value">@{user?.nickname}</span>
+                            <div className="edito-info-item">
+                                <span className="edito-info-label-small">Usuario:</span>
+                                <span className="edito-info-value">@{user?.nickname}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="action-buttons">
+                    <div className="edito-action-buttons">
                         <button
                             type="button"
                             onClick={cancelEdit}
-                            className="cancel-btn"
+                            className="edito-cancel-btn"
                             disabled={saving}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -426,11 +426,11 @@ const EditObra = () => {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="submit-btn"
+                            className="edito-submit-btn"
                         >
                             {saving ? (
-                                <div className="loading-content">
-                                    <div className="loading-spinner-small"></div>
+                                <div className="edito-loading-content">
+                                    <div className="edito-loading-spinner-small"></div>
                                     Guardando...
                                 </div>
                             ) : (
@@ -447,11 +447,11 @@ const EditObra = () => {
             </div>
 
             {/* Help Information */}
-            <div className="help-section">
-                <div className="help-icon">💡</div>
-                <div className="help-content">
-                    <h3 className="help-title">Consejos para editar tu obra</h3>
-                    <ul className="help-list">
+            <div className="edito-help-section">
+                <div className="edito-help-icon">💡</div>
+                <div className="edito-help-content">
+                    <h3 className="edito-help-title">Consejos para editar tu obra</h3>
+                    <ul className="edito-help-list">
                         <li>Puedes cambiar la imagen manteniendo la calidad original</li>
                         <li>Actualiza el título y descripción para mejorar la visibilidad</li>
                         <li>Revisa que las categorías y emociones sean las correctas</li>

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreign('id_usuario')->references('id_usuario')->on('users')->onDelete('cascade');
             $table->foreign('id_obra')->references('id_obra')->on('works')->onDelete('cascade');
 
-            $table->unique(['id_usuario', 'id_obra', 'emoji']);
+            $table->unique(['id_usuario', 'id_obra']);
         });
     }
 

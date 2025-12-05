@@ -486,3 +486,158 @@
         width: 100%;
     }
 }
+
+.gallery-comment-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+}
+
+.gallery-comment-edit-btn,
+.gallery-comment-save-btn,
+.gallery-comment-cancel-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.gallery-comment-edit-btn {
+    color: #666;
+}
+
+.gallery-comment-save-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.gallery-comment-cancel-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.gallery-comment-edit-textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Estilos para los botones de acción */
+.gallery-comment-actions {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+    align-items: center;
+}
+
+/* Botón de eliminar - VERSION MEJORADA */
+.gallery-comment-delete-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: #fee;
+    border: 1px solid #f99;
+    border-radius: 6px;
+    color: #d32f2f;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 36px;
+}
+
+.gallery-comment-delete-btn:hover {
+    background-color: #fdd;
+    border-color: #f66;
+    color: #b71c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.gallery-comment-delete-btn:active {
+    transform: translateY(0);
+}
+
+.gallery-comment-delete-btn svg {
+    flex-shrink: 0;
+}
+
+.gallery-comment-delete-text {
+    white-space: nowrap;
+}
+
+/* Botón de editar */
+.gallery-comment-edit-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: #e8f4fd;
+    border: 1px solid #b3d7ff;
+    border-radius: 6px;
+    color: #1976d2;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 36px;
+}
+
+.gallery-comment-edit-btn:hover {
+    background-color: #d1e9ff;
+    border-color: #80bfff;
+    color: #0d47a1;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Botones de guardar y cancelar */
+.gallery-comment-save-btn {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.gallery-comment-cancel-btn {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.gallery-comment-save-btn:hover {
+    background-color: #388E3C;
+}
+
+.gallery-comment-cancel-btn:hover {
+    background-color: #e0e0e0;
+}
+
+/* Asegurar que los botones sean visibles */
+.gallery-comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+}
+
+.gallery-comment-date {
+    color: #666;
+    font-size: 0.85rem;
+    margin-right: auto;
+}

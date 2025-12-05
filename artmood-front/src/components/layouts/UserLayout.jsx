@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../common/Header';
 import Footer from '../common/Footer';
 
 const UserLayout = () => {
@@ -24,6 +25,7 @@ const UserLayout = () => {
 
   return (
     <div className="main-content"> {/* ← CAMBIA esta línea */}
+      <Header />
       <div className="min-h-screen bg-gray-100">
         <main className="container mx-auto px-4 py-8">
           <Outlet />

@@ -43,17 +43,27 @@ class CommentController extends Controller
         ], 201);
     }
 
-    public function update(Request $request, $id)
+public function update(Request $request, $id)
     {
         $comment = Comment::findOrFail($id);
-
+        
+        // Verificar que el usuario es el dueño del comentario
+        if ($comment->id_usuario != auth()->id()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No autorizado'
+            ], 403);
+        }
+        
         $request->validate([
-            'content'     => 'sometimes|string',
-            'status'      => 'sometimes|in:visible,hidden,deleted'
+            'content' => 'required|string',
         ]);
-
-        $comment->update($request->all());
-
+        
+        $comment->update([
+            'content' => $request->content,
+            'commented_at' => now() // Actualizar la fecha al editar (opcional)
+        ]);
+        
         return response()->json([
             'status' => 'success',
             'message' => 'Comentario actualizado correctamente',
@@ -68,6 +78,22 @@ class CommentController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Comentario eliminado correctamente'
+        ]);
+    }
+
+    public function getByObra($obraId)
+    {
+        $comments = Comment::with(['user' => function($query) {
+                $query->select('id_usuario', 'name', 'nickname', 'email');
+            }])
+            ->where('id_obra', $obraId)
+            ->where('status', 'visible')  // Solo comentarios visibles
+            ->orderBy('commented_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $comments
         ]);
     }
 }

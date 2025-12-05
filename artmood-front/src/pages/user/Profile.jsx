@@ -1,6 +1,6 @@
-// pages/user/Profile.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { obraService } from '../../services/obraService';
 import { followerService } from '../../services/followerService';
 import Card from '../../components/ui/Card';
@@ -10,6 +10,7 @@ import './Profile.css';
 
 const Profile = () => {
   const { user, logout, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [obras, setObras] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
@@ -21,7 +22,7 @@ const Profile = () => {
     comments: 0
   });
   const [profileLoading, setProfileLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard'); // Cambiado a 'dashboard'
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -40,7 +41,7 @@ const Profile = () => {
       const userWorks = allWorks.filter(work => work.id_usuario === user.id);
       setObras(userWorks);
 
-      // Actividad reciente mejorada
+      // Actividad reciente
       const mockActivity = [
         { type: 'like', user: 'Ana García', obra: 'Soledad Urbana', time: '2 horas ago', obraId: 1 },
         { type: 'comment', user: 'Carlos Ruiz', obra: 'Noche Estrellada', time: '5 horas ago', obraId: 2 },
@@ -61,7 +62,7 @@ const Profile = () => {
           : 0;
         
         const followingCount = followingRes.status === 'fulfilled'
-          ? (followingRes.value?.data?.length || followersRes.value?.length || 0)
+          ? (followingRes.value?.data?.length || followingRes.value?.length || 0)
           : 0;
 
         const totalLikes = userWorks.reduce((sum, obra) => sum + (obra.likes || 0), 0);
@@ -94,7 +95,7 @@ const Profile = () => {
   };
 
   const handleEditProfile = () => {
-    alert('🚧 Función de editar perfil en desarrollo');
+    navigate('/user/profile/edit');
   };
 
   const renderActivityIcon = (type) => {
@@ -107,7 +108,6 @@ const Profile = () => {
     }
   };
 
-  // Función para obtener la obra más popular
   const getMostPopularObra = () => {
     if (obras.length === 0) return null;
     return obras.reduce((prev, current) => 
@@ -115,7 +115,6 @@ const Profile = () => {
     );
   };
 
-  // Función para obtener obras recientes
   const getRecentObras = () => {
     return obras
       .sort((a, b) => new Date(b.fecha_publicacion || 0) - new Date(a.fecha_publicacion || 0))
@@ -139,7 +138,7 @@ const Profile = () => {
           <Card>
             <h2>No autenticado</h2>
             <p>Debes iniciar sesión para ver tu perfil.</p>
-            <Button onClick={() => window.location.href = '/login'}>
+            <Button onClick={() => navigate('/login')}>
               Ir a Iniciar Sesión
             </Button>
           </Card>
@@ -163,9 +162,8 @@ const Profile = () => {
 
   return (
     <div className="profile-container">
-      {/* Header del perfil (sin cambios) */}
+      {/* Header del perfil */}
       <div className="profile-hero">
-        <div className="profile-background"></div>
         <Card className="profile-header">
           <div className="profile-info">
             <div className="avatar-section">
@@ -195,19 +193,19 @@ const Profile = () => {
               
               <div className="profile-stats">
                 <div className="stat">
-                  <div className="stat-number" style={{color: '#10b981'}}>{stats.obras}</div>
+                  <div className="stat-number">{stats.obras}</div>
                   <div className="stat-label">Obras</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-number" style={{color: '#3b82f6'}}>{stats.followers}</div>
+                  <div className="stat-number">{stats.followers}</div>
                   <div className="stat-label">Seguidores</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-number" style={{color: '#8b5cf6'}}>{stats.following}</div>
+                  <div className="stat-number">{stats.following}</div>
                   <div className="stat-label">Siguiendo</div>
                 </div>
                 <div className="stat">
-                  <div className="stat-number" style={{color: '#f59e0b'}}>{stats.likes}</div>
+                  <div className="stat-number">{stats.likes}</div>
                   <div className="stat-label">Me gusta</div>
                 </div>
               </div>
@@ -226,7 +224,7 @@ const Profile = () => {
         </Card>
       </div>
 
-      {/* Tabs modificados - cambiado "estadísticas" por "dashboard" */}
+      {/* Tabs */}
       <Card className="tabs-container">
         <div className="tabs">
           <button
@@ -235,7 +233,6 @@ const Profile = () => {
           >
             <span className="tab-icon">📋</span>
             <span className="tab-label">Dashboard</span>
-            {activeTab === 'dashboard' && <div className="tab-indicator"></div>}
           </button>
           
           <button
@@ -244,25 +241,14 @@ const Profile = () => {
           >
             <span className="tab-icon">🔔</span>
             <span className="tab-label">Actividad</span>
-            {activeTab === 'actividad' && <div className="tab-indicator"></div>}
           </button>
           
-          <button
-            onClick={() => setActiveTab('logros')}
-            className={`tab ${activeTab === 'logros' ? 'tab-active' : ''}`}
-          >
-            <span className="tab-icon">🏆</span>
-            <span className="tab-label">Logros</span>
-            {activeTab === 'logros' && <div className="tab-indicator"></div>}
-          </button>
-
           <button
             onClick={() => setActiveTab('seguidores')}
             className={`tab ${activeTab === 'seguidores' ? 'tab-active' : ''}`}
           >
             <span className="tab-icon">👥</span>
             <span className="tab-label">Seguidores</span>
-            {activeTab === 'seguidores' && <div className="tab-indicator"></div>}
           </button>
         </div>
       </Card>
@@ -383,52 +369,11 @@ const Profile = () => {
                   </div>
                 </div>
               </Card>
-
-              {/* Consejos y sugerencias */}
-              <Card className="dashboard-card tips">
-                <div className="card-header">
-                  <div className="card-icon">💡</div>
-                  <h3>Consejos para Crecer</h3>
-                </div>
-                <div className="tips-list">
-                  <div className={`tip-item ${stats.obras >= 3 ? 'completed' : ''}`}>
-                    <div className="tip-icon">🎯</div>
-                    <div className="tip-content">
-                      <strong>Publica 3 obras</strong>
-                      <p>Muestra variedad en tu portafolio</p>
-                      <span className="tip-progress">
-                        {stats.obras}/3 completado
-                      </span>
-                    </div>
-                  </div>
-                  <div className={`tip-item ${stats.followers >= 10 ? 'completed' : ''}`}>
-                    <div className="tip-icon">👥</div>
-                    <div className="tip-content">
-                      <strong>Conecta con otros artistas</strong>
-                      <p>Sigue y comenta obras de otros</p>
-                      <span className="tip-progress">
-                        {stats.followers}/10 seguidores
-                      </span>
-                    </div>
-                  </div>
-                  <div className={`tip-item ${stats.comments >= 5 ? 'completed' : ''}`}>
-                    <div className="tip-icon">💬</div>
-                    <div className="tip-content">
-                      <strong>Interactúa con tu audiencia</strong>
-                      <p>Responde a comentarios en tus obras</p>
-                      <span className="tip-progress">
-                        {stats.comments}/5 comentarios recibidos
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
             </div>
           </div>
         )}
 
         {activeTab === 'actividad' && (
-          // ... (mantén el mismo contenido de actividad)
           <div className="activity-section">
             <div className="section-header">
               <h2>Actividad Reciente</h2>
@@ -473,68 +418,7 @@ const Profile = () => {
           </div>
         )}
 
-        {activeTab === 'logros' && (
-          // ... (mantén el mismo contenido de logros)
-          <div className="achievements-section">
-            <div className="section-header">
-              <h2>Mis Logros</h2>
-              <p>Recompensas y reconocimientos obtenidos</p>
-            </div>
-            
-            <div className="achievements-grid">
-              <Card className="achievement-card unlocked">
-                <div className="achievement-icon">🎯</div>
-                <h3>Primeros Pasos</h3>
-                <p>Publica tu primera obra</p>
-                <div className="achievement-progress">
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{width: '100%'}}></div>
-                  </div>
-                  <span>Completado</span>
-                </div>
-              </Card>
-
-              <Card className="achievement-card unlocked">
-                <div className="achievement-icon">❤️</div>
-                <h3>Popular</h3>
-                <p>Consigue 50 me gusta</p>
-                <div className="achievement-progress">
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{width: '70%'}}></div>
-                  </div>
-                  <span>{stats.likes}/50</span>
-                </div>
-              </Card>
-
-              <Card className="achievement-card locked">
-                <div className="achievement-icon">👥</div>
-                <h3>Influencer</h3>
-                <p>Alcanza 100 seguidores</p>
-                <div className="achievement-progress">
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{width: `${Math.min(stats.followers, 100)}%`}}></div>
-                  </div>
-                  <span>{stats.followers}/100</span>
-                </div>
-              </Card>
-
-              <Card className="achievement-card locked">
-                <div className="achievement-icon">🎨</div>
-                <h3>Productivo</h3>
-                <p>Publica 10 obras</p>
-                <div className="achievement-progress">
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{width: `${(stats.obras / 10) * 100}%`}}></div>
-                  </div>
-                  <span>{stats.obras}/10</span>
-                </div>
-              </Card>
-            </div>
-          </div>
-        )}
-
         {activeTab === 'seguidores' && (
-          // ... (mantén el mismo contenido de seguidores)
           <div className="followers-section">
             <div className="section-header">
               <h2>Comunidad</h2>

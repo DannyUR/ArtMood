@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { userService } from '../../services/userService';
+import './UsersManagement.css';
 
 const UsersManagement = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
     name: '',
@@ -59,6 +62,7 @@ const UsersManagement = () => {
   const closeEditModal = () => {
     setEditingUser(null);
     setEditFormData({ name: '', nickname: '', email: '', role: 'user' });
+    setError('');
   };
 
   // Función para guardar cambios del usuario
@@ -96,244 +100,405 @@ const UsersManagement = () => {
     }
   };
 
+  // Filtrar usuarios
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.nickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    
+    return matchesSearch && matchesRole;
+  });
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="am-users-loading-container">
+        <div className="am-users-spinner"></div>
+        <p className="am-users-loading-text">Cargando usuarios...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Gestión de Usuarios
-        </h1>
-        <p className="text-gray-600 mt-2">
-          Administra los {users.length} usuarios registrados en ArtMood
-        </p>
-        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <span className="text-blue-400 text-lg">ℹ️</span>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
-                Permisos de administrador
-              </h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>Como administrador, puedes eliminar usuarios que incumplan las normas de la comunidad.</p>
-                <p className="mt-1">La edición de perfiles está reservada para los propios usuarios.</p>
-              </div>
-            </div>
+    <div className="am-users-container">
+      {/* Encabezado */}
+      <div className="am-users-header">
+        <div className="am-users-header-content">
+          <h1 className="am-users-title">
+            <span className="am-users-title-icon">👥</span>
+            Gestión de Usuarios
+          </h1>
+          <p className="am-users-subtitle">
+            Administra los <span className="am-users-count">{users.length}</span> usuarios registrados en ArtMood
+          </p>
+        </div>
+        <div className="am-users-header-decorations">
+          <div className="am-users-dot am-users-dot-1"></div>
+          <div className="am-users-dot am-users-dot-2"></div>
+          <div className="am-users-dot am-users-dot-3"></div>
+        </div>
+      </div>
+
+      {/* Panel informativo */}
+      <div className="am-users-alert">
+        <div className="am-users-alert-icon">ℹ️</div>
+        <div className="am-users-alert-content">
+          <h3 className="am-users-alert-title">Permisos de administrador</h3>
+          <p className="am-users-alert-text">
+            Como administrador, puedes gestionar usuarios, cambiar roles y eliminar cuentas.
+            <br />
+            <span className="am-users-alert-highlight">
+              ¡Sé cuidadoso con los cambios que realizas!
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {/* Filtros y búsqueda */}
+      <div className="am-users-filters">
+        <div className="am-users-search">
+          <div className="am-users-search-icon">🔍</div>
+          <input
+            type="text"
+            placeholder="Buscar usuarios por nombre, nickname o email..."
+            className="am-users-search-input"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        
+        <div className="am-users-filter-group">
+          <select
+            className="am-users-filter-select"
+            value={filterRole}
+            onChange={(e) => setFilterRole(e.target.value)}
+          >
+            <option value="all">Todos los roles</option>
+            <option value="user">Usuarios</option>
+            <option value="admin">Administradores</option>
+          </select>
+          
+          <button 
+            className="am-users-refresh-btn"
+            onClick={loadUsers}
+          >
+            <span className="am-users-refresh-icon">🔄</span>
+            Actualizar
+          </button>
+        </div>
+      </div>
+
+      {/* Estadísticas */}
+      <div className="am-users-stats-grid">
+        <div className="am-users-stat-card am-users-stat-total">
+          <div className="am-users-stat-icon">👥</div>
+          <div className="am-users-stat-content">
+            <h3 className="am-users-stat-number">{users.length}</h3>
+            <p className="am-users-stat-label">Total Usuarios</p>
+            <div className="am-users-stat-trend">+12% este mes</div>
+          </div>
+        </div>
+
+        <div className="am-users-stat-card am-users-stat-artists">
+          <div className="am-users-stat-icon">🎨</div>
+          <div className="am-users-stat-content">
+            <h3 className="am-users-stat-number">
+              {users.filter(user => user.role === 'user').length}
+            </h3>
+            <p className="am-users-stat-label">Artistas</p>
+            <div className="am-users-stat-trend">Activos</div>
+          </div>
+        </div>
+
+        <div className="am-users-stat-card am-users-stat-admins">
+          <div className="am-users-stat-icon">🛡️</div>
+          <div className="am-users-stat-content">
+            <h3 className="am-users-stat-number">
+              {users.filter(user => user.role === 'admin').length}
+            </h3>
+            <p className="am-users-stat-label">Administradores</p>
+            <div className="am-users-stat-trend">Con privilegios</div>
+          </div>
+        </div>
+
+        <div className="am-users-stat-card am-users-stat-new">
+          <div className="am-users-stat-icon">🆕</div>
+          <div className="am-users-stat-content">
+            <h3 className="am-users-stat-number">
+              {users.filter(user => {
+                const monthAgo = new Date();
+                monthAgo.setMonth(monthAgo.getMonth() - 1);
+                return new Date(user.fecha_registro) > monthAgo;
+              }).length}
+            </h3>
+            <p className="am-users-stat-label">Nuevos (mes)</p>
+            <div className="am-users-stat-trend">Creciendo</div>
           </div>
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
+      {/* Lista de usuarios */}
+      <div className="am-users-list-container">
+        <div className="am-users-list-header">
+          <h2 className="am-users-list-title">
+            <span className="am-users-list-title-icon">📋</span>
+            Lista de Usuarios
+            <span className="am-users-list-count">({filteredUsers.length})</span>
+          </h2>
+          <div className="am-users-list-summary">
+            Mostrando {filteredUsers.length} de {users.length} usuarios
+          </div>
+        </div>
+
+        {filteredUsers.length === 0 ? (
+          <div className="am-users-empty-state">
+            <div className="am-users-empty-icon">👤</div>
+            <h3 className="am-users-empty-title">No se encontraron usuarios</h3>
+            <p className="am-users-empty-text">
+              {searchTerm || filterRole !== 'all' 
+                ? 'Intenta con otros términos de búsqueda o filtros'
+                : 'Los usuarios aparecerán aquí cuando se registren'}
+            </p>
+          </div>
+        ) : (
+          <div className="am-users-grid">
+            {filteredUsers.map((user) => (
+              <div key={user.id_usuario} className="am-user-card">
+                {/* Avatar y badge */}
+                <div className="am-user-header">
+                  <div className="am-user-avatar-container">
+                    {user.profile_photo ? (
+                      <img
+                        className="am-user-avatar"
+                        src={`http://localhost:8000/storage/${user.profile_photo}`}
+                        alt={user.name}
+                      />
+                    ) : (
+                      <div className="am-user-avatar-placeholder">
+                        <span className="am-user-avatar-initial">
+                          {user.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    <div className={`am-user-status ${user.role === 'admin' ? 'am-user-status-admin' : 'am-user-status-user'}`}></div>
+                  </div>
+                  
+                  <div className="am-user-badge">
+                    <span className={`am-user-role ${user.role === 'admin' ? 'am-user-role-admin' : 'am-user-role-user'}`}>
+                      {user.role === 'admin' ? '🛡️ Admin' : '🎨 Artista'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Información principal */}
+                <div className="am-user-content">
+                  <h3 className="am-user-name" title={user.name}>
+                    {user.name}
+                  </h3>
+                  
+                  <div className="am-user-nickname">
+                    <span className="am-user-nickname-icon">@</span>
+                    <span className="am-user-nickname-text">{user.nickname}</span>
+                  </div>
+                  
+                  <p className="am-user-email" title={user.email}>
+                    {user.email}
+                  </p>
+                </div>
+
+                {/* Detalles adicionales */}
+                <div className="am-user-details">
+                  <div className="am-user-detail">
+                    <span className="am-user-detail-label">📅 Registro:</span>
+                    <span className="am-user-detail-value">
+                      {new Date(user.fecha_registro).toLocaleDateString()}
+                    </span>
+                  </div>
+                  
+                  <div className="am-user-detail">
+                    <span className="am-user-detail-label">🆔 ID:</span>
+                    <span className="am-user-detail-value">#{user.id_usuario}</span>
+                  </div>
+                  
+                  {user.telefono && (
+                    <div className="am-user-detail">
+                      <span className="am-user-detail-label">📱 Tel:</span>
+                      <span className="am-user-detail-value">{user.telefono}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Acciones */}
+                <div className="am-user-actions">
+                  <button
+                    onClick={() => handleEditUser(user)}
+                    className="am-user-action-btn am-user-action-edit"
+                  >
+                    <span className="am-user-action-icon">✏️</span>
+                    Editar
+                  </button>
+                  
+                  <button
+                    onClick={() => handleDeleteUser(user.id_usuario, user.name)}
+                    className="am-user-action-btn am-user-action-delete"
+                  >
+                    <span className="am-user-action-icon">🗑️</span>
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Modal de edición */}
+      {editingUser && (
+        <div className="am-user-modal-overlay">
+          <div className="am-user-modal">
+            <div className="am-user-modal-header">
+              <h3 className="am-user-modal-title">
+                <span className="am-user-modal-icon">✏️</span>
+                Editar Usuario
+              </h3>
+              <button
+                onClick={closeEditModal}
+                className="am-user-modal-close"
+                disabled={editLoading}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateUser} className="am-user-modal-form">
+              <div className="am-user-modal-avatar">
+                {editingUser.profile_photo ? (
+                  <img
+                    className="am-user-modal-avatar-img"
+                    src={`http://localhost:8000/storage/${editingUser.profile_photo}`}
+                    alt={editingUser.name}
+                  />
+                ) : (
+                  <div className="am-user-modal-avatar-placeholder">
+                    <span className="am-user-modal-avatar-initial">
+                      {editingUser.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+                <div className="am-user-modal-avatar-info">
+                  <span className="am-user-modal-avatar-name">{editingUser.name}</span>
+                  <span className="am-user-modal-avatar-nickname">@{editingUser.nickname}</span>
+                </div>
+              </div>
+
+              <div className="am-user-modal-fields">
+                <div className="am-user-form-group">
+                  <label className="am-user-form-label">
+                    <span className="am-user-form-icon">👤</span>
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
+                    className="am-user-form-input"
+                    required
+                    disabled={editLoading}
+                    placeholder="Ingrese el nombre completo"
+                  />
+                </div>
+
+                <div className="am-user-form-group">
+                  <label className="am-user-form-label">
+                    <span className="am-user-form-icon">🏷️</span>
+                    Nombre de Usuario *
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.nickname}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, nickname: e.target.value }))}
+                    className="am-user-form-input"
+                    required
+                    disabled={editLoading}
+                    placeholder="Ingrese el nickname"
+                  />
+                </div>
+
+                <div className="am-user-form-group">
+                  <label className="am-user-form-label">
+                    <span className="am-user-form-icon">📧</span>
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    value={editFormData.email}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
+                    className="am-user-form-input"
+                    required
+                    disabled={editLoading}
+                    placeholder="usuario@ejemplo.com"
+                  />
+                </div>
+
+                <div className="am-user-form-group">
+                  <label className="am-user-form-label">
+                    <span className="am-user-form-icon">👑</span>
+                    Rol
+                  </label>
+                  <select
+                    value={editFormData.role}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, role: e.target.value }))}
+                    className="am-user-form-select"
+                    disabled={editLoading}
+                  >
+                    <option value="user">🎨 Usuario</option>
+                    <option value="admin">🛡️ Administrador</option>
+                  </select>
+                </div>
+              </div>
+
+              {error && (
+                <div className="am-user-modal-error">
+                  <span className="am-user-modal-error-icon">⚠️</span>
+                  {error}
+                </div>
+              )}
+
+              <div className="am-user-modal-actions">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  className="am-user-modal-btn am-user-modal-btn-cancel"
+                  disabled={editLoading}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={editLoading}
+                  className="am-user-modal-btn am-user-modal-btn-save"
+                >
+                  {editLoading ? (
+                    <>
+                      <span className="am-user-modal-loading"></span>
+                      Guardando...
+                    </>
+                  ) : (
+                    'Guardar Cambios'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 
-      {/* Tabla de usuarios */}
-      <div className="bg-white shadow-md rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Usuario
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Información
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Rol
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Registro
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {users.map((user) => (
-                <tr key={user.id_usuario} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        {user.profile_photo ? (
-                          <img
-                            className="h-10 w-10 rounded-full"
-                            src={`http://localhost:8000/storage/${user.profile_photo}`}
-                            alt={user.name}
-                          />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
-                            <span className="text-purple-600 font-medium">
-                              {user.name.charAt(0).toUpperCase()}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.name}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          @{user.nickname}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{user.email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
-                      ? 'bg-purple-100 text-purple-800'
-                      : 'bg-green-100 text-green-800'
-                      }`}>
-                      {user.role === 'admin' ? 'Administrador' : 'Usuario'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(user.fecha_registro).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button
-                      onClick={() => handleDeleteUser(user.id_usuario, user.name)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* Modal de edición de usuario */}
-          {editingUser && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-                <div className="p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900">
-                      Editar Usuario
-                    </h3>
-                    <button
-                      onClick={closeEditModal}
-                      className="text-gray-500 hover:text-gray-700"
-                    >
-                      ✕
-                    </button>
-                  </div>
-
-                  <form onSubmit={handleUpdateUser} className="space-y-4">
-                    <div>
-                      <label htmlFor="edit-name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Nombre Completo *
-                      </label>
-                      <input
-                        type="text"
-                        id="edit-name"
-                        name="name"
-                        value={editFormData.name}
-                        onChange={(e) => setEditFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        required
-                        disabled={editLoading}
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="edit-nickname" className="block text-sm font-medium text-gray-700 mb-1">
-                        Nombre de Usuario *
-                      </label>
-                      <input
-                        type="text"
-                        id="edit-nickname"
-                        name="nickname"
-                        value={editFormData.nickname}
-                        onChange={(e) => setEditFormData(prev => ({ ...prev, nickname: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        required
-                        disabled={editLoading}
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="edit-email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Email *
-                      </label>
-                      <input
-                        type="email"
-                        id="edit-email"
-                        name="email"
-                        value={editFormData.email}
-                        onChange={(e) => setEditFormData(prev => ({ ...prev, email: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        required
-                        disabled={editLoading}
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="edit-role" className="block text-sm font-medium text-gray-700 mb-1">
-                        Rol
-                      </label>
-                      <select
-                        id="edit-role"
-                        name="role"
-                        value={editFormData.role}
-                        onChange={(e) => setEditFormData(prev => ({ ...prev, role: e.target.value }))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                        disabled={editLoading}
-                      >
-                        <option value="user">Usuario</option>
-                        <option value="admin">Administrador</option>
-                      </select>
-                    </div>
-
-                    <div className="flex justify-end space-x-3 pt-4">
-                      <button
-                        type="button"
-                        onClick={closeEditModal}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors"
-                        disabled={editLoading}
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={editLoading}
-                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 transition-colors"
-                      >
-                        {editLoading ? 'Guardando...' : 'Guardar Cambios'}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Mensaje si no hay usuarios */}
-      {users.length === 0 && (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4">👥</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No hay usuarios registrados
-          </h3>
-          <p className="text-gray-600">
-            Los usuarios aparecerán aquí cuando se registren
-          </p>
+      {/* Mensaje de error general */}
+      {error && !editingUser && (
+        <div className="am-users-error">
+          <div className="am-users-error-icon">❌</div>
+          <p className="am-users-error-text">{error}</p>
         </div>
       )}
     </div>

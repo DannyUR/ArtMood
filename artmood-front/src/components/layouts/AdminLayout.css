@@ -1,0 +1,38 @@
+/* AdminLayout.css */
+.am-admin-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f7fafc;
+  width: 100%;
+}
+
+.am-admin-main {
+  flex: 1;
+  margin-left: 280px; /* Debe coincidir con el ancho del sidebar */
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding: 0; /* IMPORTANTE: sin padding */
+  width: calc(100% - 280px);
+  box-sizing: border-box;
+}
+
+/* Para asegurar que el dashboard ocupe todo el espacio */
+.am-admin-main .am-dashboard-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 1.5rem;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .am-admin-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .am-admin-layout {
+    flex-direction: column;
+  }
+}

@@ -79,10 +79,10 @@ const Header = () => {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <span className="user-avatar">
-                  {user.nombre?.charAt(0) || user.username?.charAt(0) || 'U'}
+                  {user.name?.charAt(0) || user.nickname?.charAt(0) || 'U'}
                 </span>
                 <span className="user-name">
-                  {user.nombre || user.username || 'Usuario'}
+                  {user.name || user.nickname || 'Usuario'}
                 </span>
                 <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>
                   ▼

@@ -174,33 +174,33 @@ const UploadObra = () => {
   };
 
   return (
-    <div className="upload-obra-container">
-      {/* Header */}
-      <div className="upload-header">
-        <div className="header-content">
-          <h1 className="upload-title">
+    <div className="uploado-container">
+      {/* Header creativo */}
+      <div className="uploado-header">
+        <div className="uploado-header-content">
+          <h1 className="uploado-title">
             Publicar Nueva Obra
           </h1>
-          <p className="upload-subtitle">
+          <p className="uploado-subtitle">
             Comparte tu arte con la comunidad ArtMood
           </p>
         </div>
-        <div className="upload-steps">
-          <div className="step active">
-            <span className="step-number">1</span>
-            <span className="step-text">Subir obra</span>
+        <div className="uploado-steps">
+          <div className="uploado-step active">
+            <span className="uploado-step-number">1</span>
+            <span className="uploado-step-text">Subir obra</span>
           </div>
-          <div className="step">
-            <span className="step-number">2</span>
-            <span className="step-text">Compartir</span>
+          <div className="uploado-step">
+            <span className="uploado-step-number">2</span>
+            <span className="uploado-step-text">Compartir</span>
           </div>
         </div>
       </div>
 
-      {/* Form Container */}
-      <div className="form-container">
+      {/* Contenedor del formulario */}
+      <div className="uploado-form-container">
         {error && (
-          <div className="error-message">
+          <div className="uploado-error-message">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
               <path d="M12 8V12M12 16H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" stroke="currentColor" strokeWidth="2"/>
             </svg>
@@ -210,25 +210,25 @@ const UploadObra = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="upload-form">
-          {/* Image Upload Section */}
-          <div className="form-section">
-            <label className="section-label">
+        <form onSubmit={handleSubmit} className="uploado-form">
+          {/* Sección de imagen */}
+          <div className="uploado-form-section">
+            <label className="uploado-section-label">
               Imagen de la Obra *
             </label>
             
             {previewUrl ? (
-              <div className="image-preview-container">
-                <div className="image-preview">
+              <div className="uploado-image-preview-container">
+                <div className="uploado-image-preview">
                   <img
                     src={previewUrl}
                     alt="Preview"
-                    className="preview-image"
+                    className="uploado-preview-image"
                   />
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="remove-image-btn"
+                    className="uploado-remove-image-btn"
                     title="Eliminar imagen"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
@@ -236,31 +236,31 @@ const UploadObra = () => {
                     </svg>
                   </button>
                 </div>
-                <p className="preview-text">Vista previa de tu obra</p>
+                <p className="uploado-preview-text">Vista previa de tu obra</p>
               </div>
             ) : (
-              <div className="image-upload-area">
+              <div className="uploado-image-upload-area">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  className="image-input"
-                  id="image-upload"
+                  className="uploado-image-input"
+                  id="uploado-image-upload"
                 />
-                <label htmlFor="image-upload" className="upload-label">
-                  <div className="upload-icon">🖼️</div>
-                  <div className="upload-text">
-                    <p className="upload-main-text">Seleccionar imagen</p>
-                    <p className="upload-sub-text">PNG, JPG, JPEG hasta 5MB</p>
+                <label htmlFor="uploado-image-upload" className="uploado-upload-label">
+                  <div className="uploado-upload-icon">🖼️</div>
+                  <div className="uploado-upload-text">
+                    <p className="uploado-upload-main-text">Seleccionar imagen</p>
+                    <p className="uploado-upload-sub-text">PNG, JPG, JPEG, GIF hasta 5MB</p>
                   </div>
                 </label>
               </div>
             )}
           </div>
 
-          {/* Title Field */}
-          <div className="form-section">
-            <label htmlFor="title" className="section-label">
+          {/* Campo de título */}
+          <div className="uploado-form-section">
+            <label htmlFor="title" className="uploado-section-label">
               Título de la Obra *
             </label>
             <input
@@ -270,18 +270,18 @@ const UploadObra = () => {
               value={formData.title}
               onChange={handleInputChange}
               placeholder="Ej: Atardecer en la montaña"
-              className="form-input"
+              className="uploado-form-input"
               maxLength={150}
               disabled={loading}
             />
-            <div className="char-counter">
+            <div className="uploado-char-counter">
               {formData.title.length}/150 caracteres
             </div>
           </div>
 
-          {/* Description Field */}
-          <div className="form-section">
-            <label htmlFor="description" className="section-label">
+          {/* Campo de descripción */}
+          <div className="uploado-form-section">
+            <label htmlFor="description" className="uploado-section-label">
               Descripción
             </label>
             <textarea
@@ -291,15 +291,15 @@ const UploadObra = () => {
               onChange={handleInputChange}
               placeholder="Describe tu obra, inspiración, técnica utilizada..."
               rows={4}
-              className="form-textarea"
+              className="uploado-form-textarea"
               disabled={loading}
             />
           </div>
 
-          {/* Category and Emotion Selectors */}
-          <div className="form-grid">
-            <div className="form-section">
-              <label htmlFor="id_categoria" className="section-label">
+          {/* Selectores de categoría y emoción */}
+          <div className="uploado-form-grid">
+            <div className="uploado-form-section">
+              <label htmlFor="id_categoria" className="uploado-section-label">
                 Categoría
               </label>
               <select
@@ -307,7 +307,7 @@ const UploadObra = () => {
                 name="id_categoria"
                 value={formData.id_categoria}
                 onChange={handleInputChange}
-                className="form-select"
+                className="uploado-form-select"
                 disabled={loading}
               >
                 <option value="">Seleccionar categoría</option>
@@ -319,8 +319,8 @@ const UploadObra = () => {
               </select>
             </div>
 
-            <div className="form-section">
-              <label htmlFor="id_emocion" className="section-label">
+            <div className="uploado-form-section">
+              <label htmlFor="id_emocion" className="uploado-section-label">
                 Emoción
               </label>
               <select
@@ -328,7 +328,7 @@ const UploadObra = () => {
                 name="id_emocion"
                 value={formData.id_emocion}
                 onChange={handleInputChange}
-                className="form-select"
+                className="uploado-form-select"
                 disabled={loading}
               >
                 <option value="">Seleccionar emoción</option>
@@ -341,26 +341,26 @@ const UploadObra = () => {
             </div>
           </div>
 
-          {/* Artist Info */}
-          <div className="artist-info">
-            <h3 className="artist-label">Publicar como:</h3>
-            <div className="artist-details">
-              <div className="artist-avatar">
+          {/* Información del artista */}
+          <div className="uploado-artist-info">
+            <h3 className="uploado-artist-label">Publicar como:</h3>
+            <div className="uploado-artist-details">
+              <div className="uploado-artist-avatar">
                 {user?.name?.charAt(0).toUpperCase()}
               </div>
-              <div className="artist-text">
-                <p className="artist-name">{user?.name}</p>
-                <p className="artist-handle">@{user?.nickname}</p>
+              <div className="uploado-artist-text">
+                <p className="uploado-artist-name">{user?.name}</p>
+                <p className="uploado-artist-handle">@{user?.nickname}</p>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="action-buttons">
+          {/* Botones de acción */}
+          <div className="uploado-action-buttons">
             <button
               type="button"
               onClick={() => navigate('/user')}
-              className="cancel-btn"
+              className="uploado-cancel-btn"
               disabled={loading}
             >
               Cancelar
@@ -368,11 +368,11 @@ const UploadObra = () => {
             <button
               type="submit"
               disabled={loading}
-              className="submit-btn"
+              className="uploado-submit-btn"
             >
               {loading ? (
-                <div className="loading-content">
-                  <div className="loading-spinner"></div>
+                <div className="uploado-loading-content">
+                  <div className="uploado-loading-spinner"></div>
                   Publicando...
                 </div>
               ) : (
@@ -388,12 +388,12 @@ const UploadObra = () => {
         </form>
       </div>
 
-      {/* Help Information */}
-      <div className="help-section">
-        <div className="help-icon">💡</div>
-        <div className="help-content">
-          <h3 className="help-title">Consejos para una buena publicación</h3>
-          <ul className="help-list">
+      {/* Sección de ayuda */}
+      <div className="uploado-help-section">
+        <div className="uploado-help-icon">💡</div>
+        <div className="uploado-help-content">
+          <h3 className="uploado-help-title">Consejos para una buena publicación</h3>
+          <ul className="uploado-help-list">
             <li>Usa un título descriptivo y atractivo</li>
             <li>Selecciona una imagen de alta calidad</li>
             <li>Describe tu proceso creativo o inspiración</li>

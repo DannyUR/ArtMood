@@ -1,446 +1,642 @@
-/* UploadObra.css - Diseño moderno y atractivo */
+/* UploadObra.css - Diseño creativo y llamativo */
 
-.upload-obra-container {
-  max-width: 800px;
-  margin: 0 auto;
+/* Variables de color para el tema artístico */
+:root {
+  --uploado-primary: #6C63FF;
+  --uploado-secondary: #FF6584;
+  --uploado-accent: #36D1DC;
+  --uploado-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --uploado-card-bg: rgba(255, 255, 255, 0.95);
+  --uploado-shadow: 0 10px 40px rgba(108, 99, 255, 0.2);
+  --uploado-glow: 0 0 20px rgba(108, 99, 255, 0.4);
+}
+
+/* Contenedor principal con fondo artístico */
+.uploado-container {
+  min-height: 100vh;
+  background: var(--uploado-bg);
   padding: 20px;
-}
-
-/* Header Section */
-.upload-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
-  padding: 32px;
-  margin-bottom: 24px;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-content {
-  flex: 1;
-}
-
-.upload-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  line-height: 1.2;
-}
-
-.upload-subtitle {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin: 0;
-}
-
-.upload-steps {
-  display: flex;
-  gap: 16px;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0.6;
-}
-
-.step.active {
-  opacity: 1;
-}
-
-.step-number {
-  width: 32px;
-  height: 32px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.step-text {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* Form Container */
-.form-container {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  padding: 32px;
-  margin-bottom: 24px;
-}
-
-.error-message {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 16px;
-  border-radius: 12px;
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.error-message svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* Form Sections */
-.upload-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.section-label {
-  font-weight: 600;
-  color: #1e293b;
-  font-size: 0.95rem;
-}
-
-/* Image Upload */
-.image-preview-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.image-preview {
   position: relative;
-  display: inline-block;
+  overflow: hidden;
 }
 
-.preview-image {
-  max-height: 300px;
-  max-width: 100%;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.remove-image-btn {
+/* Elementos decorativos de fondo */
+.uploado-container::before {
+  content: '';
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 32px;
-  height: 32px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  border-radius: 50%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 101, 132, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(54, 209, 220, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 40% 40%, rgba(108, 99, 255, 0.1) 0%, transparent 30%);
+  z-index: 0;
+}
+
+/* Header creativo */
+.uploado-header {
+  background: var(--uploado-card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: var(--uploado-shadow);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.uploado-header::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, transparent 50%, rgba(108, 99, 255, 0.1) 50%);
+  border-radius: 0 24px 0 0;
+}
+
+.uploado-header-content {
+  position: relative;
+  z-index: 2;
+}
+
+.uploado-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--uploado-primary), var(--uploado-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.uploado-subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+/* Timeline creativo */
+.uploado-steps {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.uploado-step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  padding: 20px;
+  background: rgba(108, 99, 255, 0.05);
+  border-radius: 16px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.uploado-step.active {
+  background: linear-gradient(135deg, var(--uploado-primary), var(--uploado-accent));
+  transform: translateY(-5px);
+  box-shadow: var(--uploado-shadow);
+}
+
+.uploado-step-number {
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.remove-image-btn:hover {
-  background: #dc2626;
-  transform: scale(1.1);
-}
-
-.preview-text {
-  font-size: 0.9rem;
-  color: #64748b;
-}
-
-.image-upload-area {
-  border: 2px dashed #cbd5e0;
-  border-radius: 12px;
-  padding: 40px 20px;
-  text-align: center;
+  background: white;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: var(--uploado-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  cursor: pointer;
 }
 
-.image-upload-area:hover {
-  border-color: #667eea;
-  background: #f8fafc;
+.uploado-step.active .uploado-step-number {
+  background: white;
+  color: var(--uploado-primary);
+  transform: scale(1.1);
+  box-shadow: var(--uploado-glow);
 }
 
-.image-input {
-  display: none;
+.uploado-step-text {
+  font-weight: 600;
+  color: #666;
+  font-size: 1.1rem;
 }
 
-.upload-label {
-  cursor: pointer;
+.uploado-step.active .uploado-step-text {
+  color: white;
+}
+
+/* Contenedor del formulario */
+.uploado-form-container {
+  background: var(--uploado-card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  margin-bottom: 30px;
+  box-shadow: var(--uploado-shadow);
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Mensaje de error mejorado */
+.uploado-error-message {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #FF4757, #FF3838);
+  color: white;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  animation: uploado-shake 0.5s ease;
+  box-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);
+}
+
+@keyframes uploado-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+}
+
+/* Formulario */
+.uploado-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
+  gap: 30px;
 }
 
-.upload-icon {
-  font-size: 3rem;
-  opacity: 0.7;
+/* Secciones del formulario */
+.uploado-form-section {
+  margin-bottom: 20px;
 }
 
-.upload-main-text {
+.uploado-section-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--uploado-primary);
   font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-}
-
-.upload-sub-text {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin: 0;
-}
-
-/* Form Inputs */
-.form-input, .form-textarea, .form-select {
-  width: 100%;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  background: #ffffff;
-}
-
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.form-input:disabled, .form-textarea:disabled, .form-select:disabled {
-  background: #f8fafc;
-  opacity: 0.7;
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.char-counter {
-  font-size: 0.8rem;
-  color: #94a3b8;
-  text-align: right;
-}
-
-/* Form Grid */
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-/* Artist Info */
-.artist-info {
-  background: #f8fafc;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid #e2e8f0;
-}
-
-.artist-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 12px 0;
-}
-
-.artist-details {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.artist-avatar {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  color: white;
-  font-size: 1rem;
-}
-
-.artist-name {
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.artist-handle {
-  color: #64748b;
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-/* Action Buttons */
-.action-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  padding-top: 24px;
-  border-top: 1px solid #e2e8f0;
-}
-
-.cancel-btn {
-  padding: 12px 24px;
-  border: 1px solid #cbd5e0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #64748b;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.cancel-btn:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #94a3b8;
-}
-
-.submit-btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.loading-content {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.loading-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid transparent;
-  border-top: 2px solid currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Help Section */
-.help-section {
-  background: #eff6ff;
-  border: 1px solid #dbeafe;
-  border-radius: 12px;
-  padding: 24px;
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.help-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.help-content {
-  flex: 1;
-}
-
-.help-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e40af;
-  margin: 0 0 8px 0;
-}
-
-.help-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  color: #374151;
-}
-
-.help-list li {
-  padding: 4px 0;
   position: relative;
-  padding-left: 16px;
+  padding-left: 25px;
 }
 
-.help-list li:before {
-  content: "•";
-  color: #667eea;
+.uploado-section-label::before {
+  content: '🎨';
   position: absolute;
   left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
-/* Responsive Design */
+/* Área de subida de imagen creativa */
+.uploado-image-upload-area {
+  border: 3px dashed var(--uploado-primary);
+  border-radius: 20px;
+  padding: 50px;
+  text-align: center;
+  background: rgba(108, 99, 255, 0.03);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.uploado-image-upload-area:hover {
+  border-color: var(--uploado-secondary);
+  background: rgba(108, 99, 255, 0.08);
+  transform: translateY(-5px);
+  box-shadow: var(--uploado-shadow);
+}
+
+.uploado-image-upload-area::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(108, 99, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: uploado-shimmer 3s infinite linear;
+}
+
+@keyframes uploado-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.uploado-upload-label {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.uploado-upload-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  display: inline-block;
+  animation: uploado-float 3s ease-in-out infinite;
+}
+
+@keyframes uploado-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.uploado-upload-main-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--uploado-primary);
+  margin-bottom: 10px;
+}
+
+.uploado-upload-sub-text {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Inputs y textareas creativos */
+.uploado-form-input,
+.uploado-form-textarea,
+.uploado-form-select {
+  width: 100%;
+  padding: 18px;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.uploado-form-input:focus,
+.uploado-form-textarea:focus,
+.uploado-form-select:focus {
+  outline: none;
+  border-color: var(--uploado-primary);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.uploado-form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.uploado-form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236C63FF' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 16px;
+  padding-right: 50px;
+}
+
+/* Grid de categorías y emociones */
+.uploado-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+/* Contador de caracteres */
+.uploado-char-counter {
+  text-align: right;
+  font-size: 0.85rem;
+  color: #999;
+  margin-top: 8px;
+}
+
+/* Vista previa de imagen */
+.uploado-image-preview-container {
+  position: relative;
+}
+
+.uploado-image-preview {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--uploado-shadow);
+}
+
+.uploado-preview-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.uploado-image-preview:hover .uploado-preview-image {
+  transform: scale(1.05);
+}
+
+.uploado-remove-image-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.uploado-remove-image-btn:hover {
+  background: #ff4757;
+  color: white;
+  transform: rotate(90deg) scale(1.1);
+}
+
+.uploado-preview-text {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+  color: var(--uploado-primary);
+  font-size: 1.1rem;
+}
+
+/* Información del artista */
+.uploado-artist-info {
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(255, 101, 132, 0.05));
+  border-radius: 20px;
+  padding: 25px;
+  margin-top: 20px;
+  border: 2px dashed var(--uploado-primary);
+}
+
+.uploado-artist-label {
+  color: var(--uploado-primary);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.uploado-artist-details {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.uploado-artist-avatar {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--uploado-primary), var(--uploado-accent));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: var(--uploado-shadow);
+}
+
+.uploado-artist-text {
+  flex: 1;
+}
+
+.uploado-artist-name {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.uploado-artist-handle {
+  color: #666;
+  font-size: 1rem;
+}
+
+/* Botones de acción */
+.uploado-action-buttons {
+  display: flex;
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.uploado-cancel-btn {
+  flex: 1;
+  padding: 18px;
+  background: transparent;
+  border: 2px solid #e0e0e0;
+  border-radius: 15px;
+  color: #666;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.uploado-cancel-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.uploado-submit-btn {
+  flex: 2;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--uploado-primary), var(--uploado-secondary));
+  border: none;
+  border-radius: 15px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.uploado-submit-btn:hover:not(:disabled) {
+  transform: translateY(-5px);
+  box-shadow: var(--uploado-glow);
+}
+
+.uploado-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.uploado-submit-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: uploado-shine 2s infinite;
+}
+
+@keyframes uploado-shine {
+  to {
+    left: 100%;
+  }
+}
+
+.uploado-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uploado-loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: uploado-spin 1s linear infinite;
+}
+
+@keyframes uploado-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Sección de ayuda */
+.uploado-help-section {
+  background: var(--uploado-card-bg);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--uploado-shadow);
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.uploado-help-icon {
+  font-size: 4rem;
+  animation: uploado-pulse 2s ease-in-out infinite;
+}
+
+@keyframes uploado-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.uploado-help-content {
+  flex: 1;
+}
+
+.uploado-help-title {
+  font-size: 1.5rem;
+  color: var(--uploado-primary);
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.uploado-help-list {
+  list-style: none;
+  padding: 0;
+}
+
+.uploado-help-list li {
+  padding: 10px 0;
+  color: #666;
+  position: relative;
+  padding-left: 30px;
+  font-size: 1rem;
+}
+
+.uploado-help-list li::before {
+  content: '✨';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .upload-obra-container {
-    padding: 16px;
+  .uploado-container {
+    padding: 10px;
   }
   
-  .upload-header {
+  .uploado-header,
+  .uploado-form-container,
+  .uploado-help-section {
+    padding: 25px;
+  }
+  
+  .uploado-title {
+    font-size: 2.5rem;
+  }
+  
+  .uploado-steps {
     flex-direction: column;
-    gap: 20px;
-    text-align: center;
-    padding: 24px;
   }
   
-  .upload-steps {
-    justify-content: center;
-  }
-  
-  .form-container {
-    padding: 24px;
-  }
-  
-  .form-grid {
+  .uploado-form-grid {
     grid-template-columns: 1fr;
   }
   
-  .action-buttons {
+  .uploado-action-buttons {
     flex-direction: column;
   }
   
-  .help-section {
+  .uploado-help-section {
     flex-direction: column;
     text-align: center;
   }
+  
+  .uploado-help-list li {
+    padding-left: 0;
+    text-align: left;
+  }
+  
+  .uploado-help-list li::before {
+    position: static;
+    margin-right: 10px;
+  }
+}
+
+/* Animación de entrada */
+@keyframes uploado-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.uploado-header,
+.uploado-form-container,
+.uploado-help-section {
+  animation: uploado-fadeInUp 0.6s ease-out;
 }

@@ -35,7 +35,7 @@ const Home = () => {
             
             {user ? (
               <div className="home-user-welcome">
-                <h2 className="home-welcome-message">¡Hola, {user.nombre || user.username || 'Usuario'}! 😊</h2>
+                <h2 className="home-welcome-message">¡Hola, {user.name || user.nickname || 'Usuario'}! 😊</h2>
                 <p className="home-welcome-text">Bienvenido de vuelta a nuestra comunidad creativa</p>
                 <div className="home-action-buttons">
                   <Button 

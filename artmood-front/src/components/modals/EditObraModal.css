@@ -1,320 +1,780 @@
-/* components/modals/EditObraModal.css */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
+/* EditObraModal.css - Diseño creativo y llamativo */
+
+/* Variables de color para el modal de edición */
+:root {
+  --editm-primary: #FF6B6B;
+  --editm-secondary: #4ECDC4;
+  --editm-accent: #FFD166;
+  --editm-bg: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+  --editm-card-bg: rgba(255, 255, 255, 0.98);
+  --editm-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --editm-glow: 0 0 30px rgba(255, 107, 107, 0.4);
+  --editm-glass: rgba(255, 255, 255, 0.1);
 }
 
-.modal-content {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    max-width: 700px;
-    width: 100%;
+/* Overlay con efecto vidrio esmerilado */
+.edito-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85); /* Fondo más oscuro para mejor contraste */
+  backdrop-filter: blur(15px); /* Más blur para mejor enfoque */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Alto z-index para asegurar que esté encima de todo */
+  padding: 20px;
+  animation: edito-fadeIn 0.3s ease-out;
+  overflow: hidden; /* Evitar scroll en el overlay */
+}
+
+@keyframes edito-fadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* Contenido principal del modal */
+.edito-modal-content {
+  background: var(--editm-card-bg);
+  border-radius: 32px;
+  width: 100%;
+  max-width: 800px;
+  height: 85vh; /* Altura máxima del 85% de la ventana */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: var(--editm-shadow);
+  animation: edito-slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden; /* Solo contenedor exterior oculta */
+  z-index: 10000; /* Más alto que el overlay */
+}
+
+@keyframes edito-slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Decoración del fondo del modal */
+.edito-modal-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  opacity: 0.1;
+  z-index: 0;
+  border-radius: 32px 32px 0 0;
+}
+
+.edito-modal-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.8), transparent);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Header del modal */
+.edito-modal-header {
+  padding: 30px 40px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  background: var(--editm-card-bg);
+  backdrop-filter: blur(10px);
+  flex-shrink: 0; /* Evitar que se encoja */
+}
+
+.edito-header-content {
+  flex: 1;
+}
+
+.edito-modal-title {
+  font-size: 2.8rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: inline-block;
+}
+
+.edito-modal-title::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  border-radius: 2px;
+}
+
+.edito-modal-subtitle {
+  font-size: 1.1rem;
+  color: #444; /* Color más oscuro para mejor legibilidad */
+  font-weight: 500;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+/* Botón de cerrar */
+.edito-modal-close-btn {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 20px;
+  z-index: 100; /* Alto z-index para el botón de cerrar */
+}
+
+.edito-modal-close-btn:hover {
+  background: var(--editm-primary);
+  color: white;
+  transform: rotate(90deg) scale(1.1);
+  box-shadow: var(--editm-glow);
+}
+
+.edito-modal-close-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 50%;
+}
+
+.edito-modal-close-btn:hover::before {
+  opacity: 1;
+}
+
+.edito-modal-close-btn svg {
+  position: relative;
+  z-index: 1;
+}
+
+/* Cuerpo del modal */
+.edito-modal-body {
+  padding: 0 40px 40px;
+  position: relative;
+  z-index: 1;
+  flex: 1; /* Ocupar el espacio restante */
+  overflow-y: auto; /* Habilitar scroll vertical */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mensaje de error */
+.edito-error-message {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #FF6B6B, #FF5252);
+  color: white;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  animation: edito-shake 0.5s ease;
+  box-shadow: 0 4px 20px rgba(255, 107, 107, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.edito-error-message::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 70%
+  );
+  animation: edito-shimmer 2s infinite linear;
+}
+
+@keyframes edito-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Formulario */
+.edito-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  flex: 1;
+}
+
+/* Secciones del formulario */
+.edito-form-section {
+  margin-bottom: 25px;
+  flex-shrink: 0; /* Evitar que se encojan las secciones */
+}
+
+.edito-section-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #333; /* Color más oscuro */
+  font-size: 1.1rem;
+  position: relative;
+  padding-left: 35px;
+}
+
+.edito-section-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.edito-form-section:nth-child(1) .edito-section-label::before { content: '🖼️'; }
+.edito-form-section:nth-child(2) .edito-section-label::before { content: '📝'; }
+.edito-form-section:nth-child(3) .edito-section-label::before { content: '📄'; }
+.edito-form-section:nth-child(4) .edito-section-label::before { content: '🏷️'; }
+
+/* Área de carga de imagen */
+.edito-image-upload-area {
+  border: 3px dashed var(--editm-primary);
+  border-radius: 25px;
+  padding: 30px; /* Reducido para ahorrar espacio */
+  text-align: center;
+  background: rgba(255, 107, 107, 0.03);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.edito-image-upload-area:hover {
+  border-color: var(--editm-secondary);
+  background: rgba(78, 205, 196, 0.08);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.edito-image-upload-area::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent,
+    rgba(255, 107, 107, 0.1),
+    transparent 30%
+  );
+  animation: edito-rotate 3s linear infinite;
+}
+
+@keyframes edito-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.edito-upload-label {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.edito-upload-icon {
+  font-size: 4.5rem;
+  margin-bottom: 20px;
+  display: inline-block;
+  animation: edito-bounce 2s ease-in-out infinite;
+}
+
+@keyframes edito-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.05); }
+}
+
+.edito-upload-text {
+  position: relative;
+  z-index: 2;
+}
+
+.edito-upload-main-text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--editm-primary);
+  margin-bottom: 10px;
+}
+
+.edito-upload-sub-text {
+  color: #666;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+/* Vista previa de imagen */
+.edito-image-preview-container {
+  position: relative;
+}
+
+.edito-image-preview {
+  position: relative;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: var(--editm-shadow);
+  transition: all 0.3s ease;
+  height: 200px; /* Altura fija para vista previa */
+}
+
+.edito-image-preview:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.edito-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.edito-image-preview:hover .edito-preview-image {
+  transform: scale(1.1);
+}
+
+.edito-remove-image-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.edito-remove-image-btn:hover {
+  background: var(--editm-primary);
+  color: white;
+  transform: rotate(180deg) scale(1.1);
+}
+
+.edito-preview-text {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 600;
+  color: var(--editm-secondary);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.edito-preview-text::before {
+  content: '👁️';
+  font-size: 1.2rem;
+}
+
+/* Inputs y textareas */
+.edito-form-input,
+.edito-form-textarea,
+.edito-form-select {
+  width: 100%;
+  padding: 20px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  font-size: 1.05rem;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.edito-form-input:focus,
+.edito-form-textarea:focus,
+.edito-form-select:focus {
+  outline: none;
+  border-color: var(--editm-primary);
+  box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+  transform: translateY(-3px);
+}
+
+.edito-form-textarea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.edito-form-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23FF6B6B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 20px center;
+  background-size: 20px;
+  padding-right: 60px;
+  cursor: pointer;
+}
+
+.edito-form-select:hover {
+  background-color: rgba(255, 107, 107, 0.02);
+}
+
+/* Contador de caracteres */
+.edito-char-counter {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #999;
+  margin-top: 10px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.edito-char-counter.warning {
+  color: var(--editm-primary);
+  font-weight: bold;
+}
+
+/* Grid de categorías y emociones */
+.edito-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px; /* Reducido el gap */
+  margin-top: 10px; /* Reducido el margen superior */
+}
+
+/* Botones de acción */
+.edito-modal-actions {
+  display: flex;
+  gap: 20px;
+  margin-top: auto; /* Empujar al final */
+  padding: 30px 0 20px;
+  border-top: 2px solid rgba(0, 0, 0, 0.05);
+  position: sticky;
+  bottom: 0;
+  background: var(--editm-card-bg);
+  z-index: 10;
+}
+
+.edito-cancel-btn {
+  flex: 1;
+  padding: 20px;
+  background: transparent;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  color: #666;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.edito-cancel-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.2);
+  color: #333;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.edito-submit-btn {
+  flex: 2;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-weight: 800;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.5px;
+}
+
+.edito-submit-btn:hover:not(:disabled) {
+  transform: translateY(-5px);
+  box-shadow: var(--editm-glow);
+  letter-spacing: 1px;
+}
+
+.edito-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.edito-submit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.edito-submit-btn:hover::before {
+  left: 100%;
+}
+
+.edito-loading-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.edito-loading-spinner-small {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: edito-spin 1s linear infinite;
+}
+
+@keyframes edito-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Estado de carga */
+.edito-loading-modal {
+  background: var(--editm-card-bg);
+  border-radius: 32px;
+  padding: 80px;
+  text-align: center;
+  animation: edito-pulse 2s ease-in-out infinite;
+}
+
+@keyframes edito-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.edito-loading-spinner {
+  width: 70px;
+  height: 70px;
+  border: 5px solid rgba(255, 107, 107, 0.1);
+  border-top: 5px solid var(--editm-primary);
+  border-radius: 50%;
+  animation: edito-spin 1.5s linear infinite;
+  margin: 0 auto 30px;
+}
+
+.edito-loading-text {
+  font-size: 1.2rem;
+  color: var(--editm-primary);
+  font-weight: 600;
+  animation: edito-fadeInOut 1.5s ease-in-out infinite;
+}
+
+@keyframes edito-fadeInOut {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .edito-overlay {
+    padding: 10px;
+  }
+  
+  .edito-modal-content {
     max-height: 90vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 24px 32px;
-    border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px 12px 0 0;
-}
-
-.modal-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-}
-
-.modal-subtitle {
-    margin: 4px 0 0 0;
-    opacity: 0.9;
-    font-size: 0.95rem;
-}
-
-.modal-close-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    transition: background 0.2s;
-}
-
-.modal-close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.modal-body {
-    padding: 32px;
-}
-
-.loading-modal {
-    display: flex;
+    border-radius: 25px;
+  }
+  
+  .edito-modal-header {
+    padding: 25px 25px 15px;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 60px;
-    text-align: center;
-}
-
-.loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #667eea;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Reutiliza los estilos de EditObra.css pero ajusta para modal */
-.edit-obra-modal .form-section {
-    margin-bottom: 24px;
-}
-
-.edit-obra-modal .section-label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 8px;
-    color: #374151;
-}
-
-.edit-obra-modal .form-input,
-.edit-obra-modal .form-textarea,
-.edit-obra-modal .form-select {
-    width: 100%;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-}
-
-.edit-obra-modal .form-input:focus,
-.edit-obra-modal .form-textarea:focus,
-.edit-obra-modal .form-select:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.edit-obra-modal .form-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.edit-obra-modal .char-counter {
-    text-align: right;
-    font-size: 0.85rem;
-    color: #6b7280;
-    margin-top: 4px;
-}
-
-.edit-obra-modal .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-/* Image Preview */
-.edit-obra-modal .image-preview-container {
-    display: flex;
+    gap: 15px;
+  }
+  
+  .edito-modal-title {
+    font-size: 2.2rem;
+  }
+  
+  .edito-modal-body {
+    padding: 0 25px 25px;
+  }
+  
+  .edito-form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .edito-modal-actions {
     flex-direction: column;
-    align-items: center;
+    padding: 20px 0 15px;    
+  }
+  
+  .edito-image-upload-area {
+    padding: 30px;
+    min-height: 120px;    
+  }
+  
+  .edito-upload-icon {
+    font-size: 3.5rem;
+  }
+  
+  .edito-upload-main-text {
+    font-size: 1.3rem;
+  }
+
+    .edito-image-preview {
+    height: 180px;
+  }
+  
+  .edito-upload-icon {
+    font-size: 2.5rem; /* Reducido en móviles */
+    margin-bottom: 10px;
+  }
+  
+  .edito-upload-main-text {
+    font-size: 1.1rem; /* Reducido en móviles */
+  }
 }
 
-.edit-obra-modal .image-preview {
-    position: relative;
-    width: 200px;
-    height: 200px;
-    margin-bottom: 12px;
+/* Scrollbar personalizado */
+.edito-modal-content::-webkit-scrollbar {
+  width: 8px;
 }
 
-.edit-obra-modal .preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #e5e7eb;
+.edito-modal-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 10px;
+  margin: 10px 0;
 }
 
-.edit-obra-modal .remove-image-btn {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ef4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 0.8rem;
+.edito-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--editm-primary), var(--editm-secondary));
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
-.edit-obra-modal .preview-text {
-    font-size: 0.9rem;
-    color: #6b7280;
-    text-align: center;
+.edito-modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--editm-secondary), var(--editm-primary));
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Image Upload */
-.edit-obra-modal .image-upload-area {
-    border: 2px dashed #d1d5db;
-    border-radius: 8px;
-    padding: 40px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.2s;
+/* Mejorar visibilidad de los placeholders */
+.edito-form-input::placeholder,
+.edito-form-textarea::placeholder {
+  color: #999;
+  opacity: 0.8;
 }
 
-.edit-obra-modal .image-upload-area:hover {
-    border-color: #667eea;
+/* Asegurar que los inputs tengan buen contraste */
+.edito-form-input,
+.edito-form-textarea,
+.edito-form-select {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-.edit-obra-modal .image-input {
-    display: none;
+.edito-form-input:focus,
+.edito-form-textarea:focus,
+.edito-form-select:focus {
+  border-color: var(--editm-primary);
+  background: white;
 }
 
-.edit-obra-modal .upload-label {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+/* Indicador visual de que hay más contenido */
+.edito-modal-body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to top, var(--editm-card-bg), transparent);
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 0 0 32px 32px;
 }
 
-.edit-obra-modal .upload-icon {
-    font-size: 2rem;
+/* Clase para mostrar que hay scroll disponible */
+.edito-modal-content.scrollable::before {
+  content: '↓ Desplázate para ver más contenido ↓';
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: var(--editm-primary);
+  font-size: 0.9rem;
+  opacity: 0.7;
+  animation: edito-pulse 2s infinite;
+  z-index: 5;
 }
-
-.edit-obra-modal .upload-main-text {
-    font-weight: 600;
-    color: #374151;
-    margin: 0;
-}
-
-.edit-obra-modal .upload-sub-text {
-    font-size: 0.9rem;
-    color: #6b7280;
-    margin: 4px 0 0 0;
-}
-
-/* Error Message */
-.edit-obra-modal .error-message {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 24px;
-    color: #dc2626;
-}
-
-.edit-obra-modal .error-message svg {
-    flex-shrink: 0;
-    margin-top: 2px;
-}
-
-/* Action Buttons */
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 16px;
-    margin-top: 32px;
-    padding-top: 24px;
-    border-top: 1px solid #e5e7eb;
-}
-
-.cancel-btn {
-    padding: 12px 24px;
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-weight: 600;
-    color: #374151;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.cancel-btn:hover {
-    background: #e5e7eb;
-}
-
-.submit-btn {
-    padding: 12px 32px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.submit-btn:hover:not(:disabled) {
-    opacity: 0.9;
-}
-
-.submit-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.loading-content {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.loading-spinner-small {
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    animation: spin 1s linear infinite;
-}
-

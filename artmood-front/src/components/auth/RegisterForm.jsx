@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService';
+import Header from '../common/Header';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import './Register.css';
@@ -65,6 +66,7 @@ const RegisterForm = () => {
 
   return (
     <div className="register-container">
+      <Header />
       {/* Fondo animado con partículas */}
       <div className="register-background">
         <div className="floating-art-elements">

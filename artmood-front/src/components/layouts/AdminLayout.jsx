@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from '../common/Sidebar';
+import './AdminLayout.css';
 
 const AdminLayout = () => {
   const { user } = useAuth();
@@ -15,15 +16,11 @@ const AdminLayout = () => {
   }
 
   return (
-    <div className="main-content"> {/* ← CAMBIA esta línea */}
-      <div className="min-h-screen bg-gray-100 flex">
-        <Sidebar />
-        <div className="flex-1 ml-64">
-          <main className="p-6">
-            <Outlet />
-          </main>
-        </div>
-      </div>
+    <div className="am-admin-layout">
+      <Sidebar />
+      <main className="am-admin-main">
+        <Outlet />
+      </main>
     </div>
   );
 };

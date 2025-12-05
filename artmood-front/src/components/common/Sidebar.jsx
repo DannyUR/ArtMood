@@ -1,59 +1,83 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import './Sidebar.css';
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
   const menuItems = [
-  { path: '/admin', label: 'Dashboard', icon: '📊' },
-  { path: '/admin/obras', label: 'Gestionar Obras', icon: '🎨' },
-  { path: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
-  { path: '/admin/categorias', label: 'Categorías', icon: '📂' },
-  { path: '/admin/emociones', label: 'Emociones', icon: '😊' },
-];
+    { path: '/admin', label: 'Dashboard', icon: '📊' },
+    { path: '/admin/obras', label: 'Gestionar Obras', icon: '🎨' },
+    { path: '/admin/usuarios', label: 'Usuarios', icon: '👥' },
+    { path: '/admin/categorias', label: 'Categorías', icon: '📂' },
+    { path: '/admin/emociones', label: 'Emociones', icon: '😊' },
+  ];
 
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-gray-800 text-white">
-      <div className="p-4 border-b border-gray-700">
-        <h1 className="text-xl font-bold">ArtMood Admin</h1>
-        <p className="text-sm text-gray-400">Panel de Administración</p>
+    <div className="am-sidebar">
+      {/* Logo y título */}
+      <div className="am-sidebar-header">
+        <div className="am-sidebar-logo">
+          <div className="am-sidebar-logo-icon">🎨</div>
+          <div className="am-sidebar-logo-text">
+            <h1 className="am-sidebar-title">ArtMood</h1>
+            <p className="am-sidebar-subtitle">Panel de Administración</p>
+          </div>
+        </div>
+        <div className="am-sidebar-header-decoration">
+          <div className="am-sidebar-dot am-sidebar-dot-1"></div>
+          <div className="am-sidebar-dot am-sidebar-dot-2"></div>
+        </div>
       </div>
 
-      <nav className="p-4">
-        <ul className="space-y-2">
+      {/* Navegación */}
+      <nav className="am-sidebar-nav">
+        <ul className="am-sidebar-menu">
           {menuItems.map(item => (
-            <li key={item.path}>
+            <li key={item.path} className="am-sidebar-menu-item">
               <Link
                 to={item.path}
-                className={`flex items-center space-x-2 p-3 rounded-lg hover:bg-gray-700 transition-colors ${location.pathname === item.path ? 'bg-purple-600' : ''
+                className={`am-sidebar-link ${location.pathname === item.path ? 'am-sidebar-link-active' : ''
                   }`}
               >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
+                <span className="am-sidebar-link-icon">{item.icon}</span>
+                <span className="am-sidebar-link-label">{item.label}</span>
+                {location.pathname === item.path && (
+                  <div className="am-sidebar-link-indicator"></div>
+                )}
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
-      <div className="absolute bottom-0 w-full p-4 border-t border-gray-700">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
-            {user?.name?.charAt(0)}
+      {/* Perfil y logout */}
+      <div className="am-sidebar-footer">
+        <div className="am-sidebar-user">
+          <div className="am-sidebar-user-avatar">
+            <div className="am-sidebar-user-avatar-initial">
+              {user?.name?.charAt(0)}
+            </div>
+            <div className="am-sidebar-user-status"></div>
           </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium">{user?.name}</p>
-            <p className="text-xs text-gray-400">{user?.email}</p>
+          <div className="am-sidebar-user-info">
+            <p className="am-sidebar-user-name">{user?.name}</p>
+            <p className="am-sidebar-user-email">{user?.email}</p>
           </div>
         </div>
         <button
           onClick={logout}
-          className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors"
+          className="am-sidebar-logout-btn"
         >
-          Cerrar Sesión
+          <span className="am-sidebar-logout-icon">🚪</span>
+          <span className="am-sidebar-logout-text">Cerrar Sesión</span>
         </button>
+        <div className="am-sidebar-footer-decoration">
+          <div className="am-sidebar-footer-dot am-sidebar-footer-dot-1"></div>
+          <div className="am-sidebar-footer-dot am-sidebar-footer-dot-2"></div>
+        </div>
       </div>
     </div>
   );

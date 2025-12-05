@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { obraService } from '../../services/obraService';
 import { categoryService } from '../../services/categoryService';
 import ObraDetailModal from '../../components/obra/ObraDetailModal';
+import ReactionButton from '../../components/reactions/ReactionButton';
 import './Gallery.css';
 
 const Gallery = () => {
@@ -14,6 +15,7 @@ const Gallery = () => {
   const [error, setError] = useState('');
   const [selectedObra, setSelectedObra] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reactionsMap, setReactionsMap] = useState({});
 
   useEffect(() => {
     loadObras();
@@ -24,6 +26,7 @@ const Gallery = () => {
     try {
       setLoading(true);
       const obrasData = await obraService.getAll();
+      console.log('📦 Obras cargadas:', obrasData);
       setObras(obrasData);
     } catch (error) {
       console.error('Error cargando obras:', error);
@@ -31,6 +34,33 @@ const Gallery = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // NUEVO: Función para actualizar reacciones de una obra específica
+  const updateReactionsForObra = async (obraId) => {
+    try {
+      const reactionService = await import('../../services/reactionService');
+      const reactionData = await reactionService.default.getReactionsByWork(obraId);
+
+      setReactionsMap(prev => ({
+        ...prev,
+        [obraId]: reactionData
+      }));
+
+      console.log(`🔄 Reacciones actualizadas para obra ${obraId}:`, reactionData);
+      return reactionData;
+    } catch (error) {
+      console.error(`❌ Error actualizando reacciones para obra ${obraId}:`, error);
+      return null;
+    }
+  };
+
+  // NUEVO: Callback cuando ReactionButton actualiza reacciones
+  const handleReactionUpdate = (obraId, reactionData) => {
+    setReactionsMap(prev => ({
+      ...prev,
+      [obraId]: reactionData
+    }));
   };
 
   const loadCategorias = async () => {
@@ -53,13 +83,40 @@ const Gallery = () => {
   };
 
   const openObraDetail = (obra) => {
+    console.log('🎨 Abriendo modal para obra:', obra.id_obra, obra.title);
     setSelectedObra(obra);
     setIsModalOpen(true);
   };
 
   const closeObraDetail = () => {
+    console.log('🔒 Cerrando modal');
     setIsModalOpen(false);
-    setSelectedObra(null);
+    setTimeout(() => {
+      setSelectedObra(null);
+    }, 300);
+  };
+
+  // Prevenir que el clic se propague cuando haces clic en botones dentro de la tarjeta
+  const handleCardClick = (e, obra) => {
+    // Solo abrir modal si no se hizo clic en un botón
+    if (!e.target.closest('button') && !e.target.closest('.reaction-button-container')) {
+      openObraDetail(obra);
+    }
+  };
+
+  // Formatear fecha de publicación
+  const formatPublishDate = (dateString) => {
+    if (!dateString) return 'Fecha no disponible';
+    try {
+      const fecha = new Date(dateString);
+      return fecha.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return 'Fecha no disponible';
+    }
   };
 
   if (loading) {
@@ -100,7 +157,7 @@ const Gallery = () => {
           <p className="gallery-hero-subtitle">
             Descubre {obras.length} obras únicas creadas por nuestra comunidad creativa
           </p>
-          
+
           <div className="gallery-hero-actions">
             {user ? (
               <Link to="/user/upload" className="gallery-upload-cta-btn">
@@ -130,7 +187,7 @@ const Gallery = () => {
             </div>
             <div className="gallery-stat-wave"></div>
           </div>
-          
+
           <div className="gallery-stat-card gallery-stat-secondary">
             <div className="gallery-stat-content">
               <div className="gallery-stat-icon">👥</div>
@@ -143,7 +200,7 @@ const Gallery = () => {
             </div>
             <div className="gallery-stat-wave"></div>
           </div>
-          
+
           <div className="gallery-stat-card gallery-stat-accent">
             <div className="gallery-stat-content">
               <div className="gallery-stat-icon">📂</div>
@@ -168,17 +225,17 @@ const Gallery = () => {
 
         {obras.length > 0 ? (
           <div className="gallery-artworks-grid">
-            {obras.map((obra, index) => (
-              <article 
-                key={obra.id_obra} 
+            {obras.map((obra) => (
+              <article
+                key={obra.id_obra}
                 className="gallery-artwork-card"
-                onClick={() => openObraDetail(obra)}
+                onClick={(e) => handleCardClick(e, obra)}
               >
                 {/* Image Container */}
                 <div className="gallery-artwork-image-container">
-                  {obra.imagen ? (
-                    <img 
-                      src={`http://localhost:8000/storage/${obra.imagen}`}
+                  {obra.image ? (
+                    <img
+                      src={`http://localhost:8000/storage/${obra.image}`}
                       alt={obra.title}
                       className="gallery-artwork-image"
                       onError={(e) => {
@@ -190,7 +247,7 @@ const Gallery = () => {
                   <div className="gallery-artwork-image-fallback">
                     <span className="gallery-fallback-icon">🎨</span>
                   </div>
-                  
+
                   {/* Overlay */}
                   <div className="gallery-artwork-overlay">
                     <div className="gallery-overlay-content">
@@ -214,36 +271,34 @@ const Gallery = () => {
                   </div>
 
                   <p className="gallery-artwork-description">
-                    {obra.description || 'Una obra llena de creatividad y emoción...'}
+                    {obra.description
+                      ? (obra.description.length > 100
+                        ? `${obra.description.substring(0, 100)}...`
+                        : obra.description)
+                      : 'Una obra llena de creatividad y emoción...'}
                   </p>
 
                   <div className="gallery-artwork-footer">
                     <div className="gallery-artist-info">
                       <div className="gallery-artist-avatar">
-                        {obra.user?.nickname?.charAt(0) || 'A'}
+                        {obra.user?.nickname?.charAt(0)?.toUpperCase() || 'A'}
                       </div>
                       <div className="gallery-artist-details">
                         <span className="gallery-artist-name">
                           por {obra.user?.nickname || 'Artista Anónimo'}
                         </span>
                         <span className="gallery-publish-date">
-                          {obra.fecha_publicacion ? 
-                            new Date(obra.fecha_publicacion).toLocaleDateString('es-ES', {
-                              day: 'numeric',
-                              month: 'long',
-                              year: 'numeric'
-                            }) : 'Fecha no disponible'}
+                          {formatPublishDate(obra.published_at)}
                         </span>
                       </div>
                     </div>
-                    
-                    <button 
-                      className="gallery-like-btn" 
-                      onClick={(e) => e.stopPropagation()}
-                      title="Me gusta"
-                    >
-                      ❤️
-                    </button>
+
+                    {/* NUEVO: Pasar callback y reacciones iniciales */}
+                    <ReactionButton
+                      obra={obra}
+                      onReactionUpdate={(data) => handleReactionUpdate(obra.id_obra, data)}
+                      initialReactions={reactionsMap[obra.id_obra]}
+                    />
                   </div>
                 </div>
               </article>
@@ -291,12 +346,17 @@ const Gallery = () => {
         </section>
       )}
 
-      {/* Modal */}
-      <ObraDetailModal 
-        obra={selectedObra}
-        isOpen={isModalOpen}
-        onClose={closeObraDetail}
-      />
+      {/* Modal - NUEVO: Pasar reacciones y callback */}
+      {selectedObra && (
+        <ObraDetailModal
+          key={`obra-modal-${selectedObra.id_obra}`}
+          obra={selectedObra}
+          isOpen={isModalOpen}
+          onClose={closeObraDetail}
+          initialReactions={reactionsMap[selectedObra.id_obra]}
+          onReactionUpdate={(data) => handleReactionUpdate(selectedObra.id_obra, data)}
+        />
+      )}
     </div>
   );
 };

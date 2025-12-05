@@ -48,9 +48,11 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/works/{id}/comments', [CommentController::class, 'index']);
     Route::post('/comments',           [CommentController::class, 'store']);
     Route::delete('/comments/{id}',    [CommentController::class, 'destroy']);
+    Route::get('comments/obra/{obraId}', [CommentController::class, 'getByObra']);
+    Route::put('comments/{id}', [CommentController::class, 'update']);
 
     // ---------- REACTIONS ----------
-    Route::get('/works/{id}/reactions', [ReactionController::class, 'index']);
+    Route::get('/works/{id}/reactions', [ReactionController::class, 'getByWork']);
     Route::post('/reactions',           [ReactionController::class, 'store']);
     Route::delete('/reactions/{id}',    [ReactionController::class, 'destroy']);
 
@@ -77,3 +79,5 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::put('/notifications/read',      [NotificationController::class, 'markAllAsRead']);
     Route::delete('/notifications/{id}',   [NotificationController::class, 'destroy']);
 });
+
+

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import Header from '../common/Header';
 import Button from '../ui/Button';
 import Card from '../ui/Card';
 import './Login.css';
@@ -52,6 +53,7 @@ const LoginForm = () => {
 
   return (
     <div className="login-container">
+     <Header />
       {/* Fondo animado con partículas */}
       <div className="login-background">
         <div className="floating-art-elements">

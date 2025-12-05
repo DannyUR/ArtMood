@@ -27,6 +27,57 @@ const MyObras = () => {
     loadCategorias();
   }, []);
 
+  // Función para encontrar la obra más reciente
+  const getObraMasReciente = () => {
+    if (!obras || obras.length === 0) return null;
+    
+    // Ordenar obras por fecha (más reciente primero)
+    const obrasOrdenadas = [...obras].sort((a, b) => {
+      // Usar diferentes posibles nombres de campo de fecha
+      const fechaA = new Date(
+        a.fecha_publicacion || 
+        a.published_at || 
+        a.created_at || 
+        a.updated_at || 
+        Date.now()
+      );
+      
+      const fechaB = new Date(
+        b.fecha_publicacion || 
+        b.published_at || 
+        b.created_at || 
+        b.updated_at || 
+        Date.now()
+      );
+      
+      return fechaB.getTime() - fechaA.getTime(); // Más reciente primero
+    });
+    
+    return obrasOrdenadas[0];
+  };
+
+  // Función para fecha relativa (opcional)
+  const getFechaRelativa = (dateString) => {
+    if (!dateString) return 'N/A';
+    
+    try {
+      const fechaObra = new Date(dateString);
+      const ahora = new Date();
+      const diffMs = ahora - fechaObra;
+      const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      if (diffDias === 0) return 'Hoy';
+      if (diffDias === 1) return 'Ayer';
+      if (diffDias < 7) return `Hace ${diffDias} días`;
+      if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} semana${Math.floor(diffDias / 7) > 1 ? 's' : ''}`;
+      
+      // Si es más de un mes, mostrar fecha normal
+      return formatDate(dateString);
+    } catch (error) {
+      return formatDate(dateString);
+    }
+  };
+
   // Función para abrir el modal de edición
   const openEditModal = (obraId) => {
     setSelectedObraId(obraId);
@@ -41,7 +92,7 @@ const MyObras = () => {
 
   // Función para recargar después de editar
   const handleEditSuccess = () => {
-    loadMyObras(); // Recargar la lista
+    loadMyObras();
   };
 
   // Función para abrir modal de confirmación
@@ -59,20 +110,16 @@ const MyObras = () => {
     setObraToDelete(null);
   };
 
-  // Función para eliminar obra (se llama desde el modal)
+  // Función para eliminar obra
   const handleDeleteConfirm = async () => {
     if (!obraToDelete) return;
 
     try {
       await obraService.delete(obraToDelete.id);
       setObras(obras.filter(obra => obra.id_obra !== obraToDelete.id));
-
-      // Puedes mostrar un toast o mensaje de éxito aquí
       console.log(`Obra "${obraToDelete.title}" eliminada correctamente`);
-
     } catch (error) {
       console.error('Error eliminando obra:', error);
-      // Podrías mostrar un modal de error
       alert('Error al eliminar la obra');
     }
   };
@@ -105,7 +152,6 @@ const MyObras = () => {
     }
   };
 
-  // MODIFICAR la función handleDeleteObra (eliminar window.confirm)
   const handleDeleteObra = (obraId, obraTitle) => {
     openDeleteConfirm(obraId, obraTitle);
   };
@@ -195,7 +241,9 @@ const MyObras = () => {
             <div className="myobras-stat-icon">📅</div>
             <div className="myobras-stat-info">
               <div className="myobras-stat-number">
-                {obras.length > 0 ? formatDate(obras[0].fecha_publicacion) : 'N/A'}
+                {obras.length > 0 ? 
+                  getFechaRelativa(getObraMasReciente()?.published_at) : 
+                  'Sin obras'}
               </div>
               <div className="myobras-stat-label">Más Reciente</div>
             </div>
@@ -243,10 +291,10 @@ const MyObras = () => {
               {/* Header de la Tarjeta */}
               <div className="myobras-card-header">
                 <div className="myobras-image-container">
-                  {obra.imagen ? (
+                  {obra.image ? (
                     <img
                       className="myobras-image"
-                      src={`http://localhost:8000/storage/${obra.imagen}`}
+                      src={`http://localhost:8000/storage/${obra.image}`}
                       alt={obra.title}
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -259,7 +307,7 @@ const MyObras = () => {
                   </div>
                 </div>
 
-                {/* Badge de acciones - ACTUALIZAR */}
+                {/* Badge de acciones */}
                 <div className="myobras-action-badge">
                   <button
                     onClick={() => openEditModal(obra.id_obra)}
