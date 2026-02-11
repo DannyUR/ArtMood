@@ -5,6 +5,7 @@ import { obraService } from '../../services/obraService';
 import { categoryService } from '../../services/categoryService';
 import EditObraModal from '../../components/modals/EditObraModal';
 import ConfirmModal from '../../components/modals/ConfirmModal';
+import ArtworkImage from '../../components/ArtworkImage';
 import './MyObras.css';
 
 const MyObras = () => {
@@ -30,47 +31,47 @@ const MyObras = () => {
   // Función para encontrar la obra más reciente
   const getObraMasReciente = () => {
     if (!obras || obras.length === 0) return null;
-    
+
     // Ordenar obras por fecha (más reciente primero)
     const obrasOrdenadas = [...obras].sort((a, b) => {
       // Usar diferentes posibles nombres de campo de fecha
       const fechaA = new Date(
-        a.fecha_publicacion || 
-        a.published_at || 
-        a.created_at || 
-        a.updated_at || 
+        a.fecha_publicacion ||
+        a.published_at ||
+        a.created_at ||
+        a.updated_at ||
         Date.now()
       );
-      
+
       const fechaB = new Date(
-        b.fecha_publicacion || 
-        b.published_at || 
-        b.created_at || 
-        b.updated_at || 
+        b.fecha_publicacion ||
+        b.published_at ||
+        b.created_at ||
+        b.updated_at ||
         Date.now()
       );
-      
+
       return fechaB.getTime() - fechaA.getTime(); // Más reciente primero
     });
-    
+
     return obrasOrdenadas[0];
   };
 
   // Función para fecha relativa (opcional)
   const getFechaRelativa = (dateString) => {
     if (!dateString) return 'N/A';
-    
+
     try {
       const fechaObra = new Date(dateString);
       const ahora = new Date();
       const diffMs = ahora - fechaObra;
       const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      
+
       if (diffDias === 0) return 'Hoy';
       if (diffDias === 1) return 'Ayer';
       if (diffDias < 7) return `Hace ${diffDias} días`;
       if (diffDias < 30) return `Hace ${Math.floor(diffDias / 7)} semana${Math.floor(diffDias / 7) > 1 ? 's' : ''}`;
-      
+
       // Si es más de un mes, mostrar fecha normal
       return formatDate(dateString);
     } catch (error) {
@@ -241,8 +242,8 @@ const MyObras = () => {
             <div className="myobras-stat-icon">📅</div>
             <div className="myobras-stat-info">
               <div className="myobras-stat-number">
-                {obras.length > 0 ? 
-                  getFechaRelativa(getObraMasReciente()?.published_at) : 
+                {obras.length > 0 ?
+                  getFechaRelativa(getObraMasReciente()?.published_at) :
                   'Sin obras'}
               </div>
               <div className="myobras-stat-label">Más Reciente</div>
@@ -291,17 +292,13 @@ const MyObras = () => {
               {/* Header de la Tarjeta */}
               <div className="myobras-card-header">
                 <div className="myobras-image-container">
-                  {obra.image ? (
-                    <img
-                      className="myobras-image"
-                      src={`http://localhost:8000/storage/${obra.image}`}
-                      alt={obra.title}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
+                  <ArtworkImage
+                    obra={obra}
+                    className="myobras-image"
+                    onError={(e) => {
+                      console.log('Error cargando imagen');
+                    }}
+                  />
                   <div className="myobras-image-fallback">
                     <span className="myobras-fallback-icon">🎨</span>
                   </div>

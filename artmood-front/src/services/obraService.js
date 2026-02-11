@@ -15,13 +15,11 @@ export const obraService = {
 
   // Crear obra (ahora soporta FormData para imágenes)
   create: async (obraData) => {
-    // Si es FormData (con imagen), no configurar headers
+    // Si es FormData (con imagen)
     if (obraData instanceof FormData) {
-      const response = await api.post('/works', obraData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // 🔴 IMPORTANTE: NO configurar 'Content-Type' manualmente
+      // El navegador lo hará automáticamente con el boundary correcto
+      const response = await api.post('/works', obraData);
       return response.data;
     } else {
       // Si es JSON normal
@@ -32,18 +30,92 @@ export const obraService = {
 
   // Actualizar obra (soporta FormData para imágenes)
   update: async (id, obraData) => {
-    // Si es FormData (con imagen), no configurar headers
+    console.log('📤 obraService.update llamado:', {
+      id,
+      esFormData: obraData instanceof FormData,
+      tieneImage: obraData instanceof FormData ? 
+        obraData.has('image') : 'N/A'
+    });
+    
+    // Si es FormData (con imagen)
     if (obraData instanceof FormData) {
-      const response = await api.post(`/works/${id}`, obraData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      return response.data;
+      // 🔴 CRÍTICO: NO configurar 'Content-Type' manualmente
+      // También usar POST con _method=PUT para Laravel
+      
+      // Verificar contenido del FormData
+      console.log('📦 Contenido de FormData:');
+      for (let pair of obraData.entries()) {
+        console.log(`  ${pair[0]}:`, pair[1] instanceof File ? 
+          `File(${pair[1].name}, ${pair[1].type})` : 
+          pair[1]);
+      }
+      
+      try {
+        // Usar POST con _method=PUT para Laravel
+        const response = await api.post(`/works/${id}`, obraData);
+        console.log('✅ Update exitoso:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('❌ Error en update con FormData:', error.response?.data || error.message);
+        throw error;
+      }
     } else {
       // Si es JSON normal
-      const response = await api.put(`/works/${id}`, obraData);
-      return response.data;
+      console.log('📄 Enviando como JSON:', obraData);
+      try {
+        const response = await api.put(`/works/${id}`, obraData);
+        return response.data;
+      } catch (error) {
+        console.error('❌ Error en update con JSON:', error.response?.data || error.message);
+        throw error;
+      }
+    }
+  },
+
+  // 🔴 NUEVO: Método específico para actualizar con FormData (alternativa)
+  updateWithImage: async (id, formData) => {
+    console.log('🖼️ updateWithImage llamado para obra:', id);
+    
+    // Asegurar que _method=PUT está incluido
+    if (!formData.has('_method')) {
+      formData.append('_method', 'PUT');
+    }
+    
+    // Debug del FormData
+    console.log('📋 Contenido final de FormData:');
+    for (let pair of formData.entries()) {
+      const [key, value] = pair;
+      if (value instanceof File) {
+        console.log(`  ${key}: File(${value.name}, ${value.type}, ${value.size} bytes)`);
+      } else {
+        console.log(`  ${key}: ${value}`);
+      }
+    }
+    
+    // Usar fetch directamente para más control
+    try {
+      const response = await fetch(`http://localhost:8000/api/works/${id}`, {
+        method: 'POST',
+        body: formData,
+        // 🔴 NO establecer Content-Type aquí
+        headers: {
+          'Accept': 'application/json',
+          // Incluir token si es necesario
+          'Authorization': `Bearer ${localStorage.getItem('token')}` || ''
+        }
+      });
+      
+      const data = await response.json();
+      console.log('📥 Respuesta fetch:', data);
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Error del servidor');
+      }
+      
+      return { data };
+    } catch (error) {
+      console.error('❌ Error en fetch:', error);
+      throw error;
     }
   },
 
@@ -53,10 +125,9 @@ export const obraService = {
     return response.data;
   },
 
-  // Obtener obras del usuario actual (usando el perfil del usuario logueado)
+  // ... (mantén el resto de los métodos igual)
   getMyObras: async () => {
     try {
-      // Podemos filtrar las obras del usuario actual
       const allWorks = await obraService.getAll();
       const user = JSON.parse(localStorage.getItem('user'));
       const myWorks = allWorks.filter(work => work.id_usuario === user.id);
@@ -67,7 +138,6 @@ export const obraService = {
     }
   },
 
-  // Obtener obras por emoción (filtrando del lado del cliente por ahora)
   getByEmotion: async (emotionId) => {
     try {
       const allWorks = await obraService.getAll();
@@ -79,7 +149,6 @@ export const obraService = {
     }
   },
 
-  // Obtener obras por categoría (filtrando del lado del cliente por ahora)
   getByCategory: async (categoryId) => {
     try {
       const allWorks = await obraService.getAll();
@@ -91,11 +160,9 @@ export const obraService = {
     }
   },
 
-  // Obtener obras populares (por número de reacciones)
   getPopular: async () => {
     try {
       const allWorks = await obraService.getAll();
-      // Ordenar por número de reacciones (necesitarías cargar reacciones primero)
       const worksWithReactions = await Promise.all(
         allWorks.map(async (work) => {
           try {
@@ -121,7 +188,6 @@ export const obraService = {
     }
   },
 
-  // Obtener obras recientes
   getRecent: async () => {
     try {
       const allWorks = await obraService.getAll();
@@ -135,7 +201,6 @@ export const obraService = {
     }
   },
 
-  // Buscar obras por término
   search: async (searchTerm) => {
     try {
       const allWorks = await obraService.getAll();
@@ -150,7 +215,6 @@ export const obraService = {
     }
   },
 
-  // Feed de obras de usuarios que sigues
   getFeedSeguidos: async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -171,7 +235,6 @@ export const obraService = {
     }
   },
 
-  // Obtener obras para descubrir (no seguidas)
   getDiscover: async () => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -191,5 +254,4 @@ export const obraService = {
       throw error;
     }
   }
-
 };

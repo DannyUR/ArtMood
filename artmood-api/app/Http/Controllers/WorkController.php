@@ -21,7 +21,6 @@ class WorkController extends Controller
                 'emotion:id_emocion,name,icon'
             ])->get();
 
-            // image_url se agrega automáticamente por el $appends en el modelo
             Log::info('INDEX - Obras obtenidas: ' . $works->count());
 
             return response()->json([
@@ -53,7 +52,6 @@ class WorkController extends Controller
 
             Log::info('SHOW - Obra encontrada: ' . $work->title);
             
-            // image_url ya está incluido por $appends
             return response()->json([
                 'status' => 'success',
                 'data' => $work
@@ -72,12 +70,11 @@ class WorkController extends Controller
     public function store(Request $request)
     {
         Log::info('STORE - Creando nueva obra', [
-            'datos' => $request->except(['image']), // Excluir imagen para no saturar logs
+            'datos' => $request->except(['image']),
             'tiene_imagen' => $request->hasFile('image')
         ]);
 
         try {
-            // Validación
             $validator = Validator::make($request->all(), [
                 'title'        => 'required|string|max:150',
                 'description'  => 'nullable|string',
@@ -96,26 +93,26 @@ class WorkController extends Controller
                 ], 422);
             }
 
-            // Procesar la imagen
+            // Procesar la imagen - VERSIÓN CORREGIDA
             $imagePath = null;
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
                 
-                // Generar nombre único y seguro
+                // Generar nombre único
                 $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeName = preg_replace('/[^a-zA-Z0-9]/', '_', $originalName);
                 $imageName = 'obra_' . time() . '_' . $safeName . '.' . $image->getClientOriginalExtension();
                 
-                // Guardar en storage
-                $image->storeAs('public/obras', $imageName);
+                // 🔴 CORRECCIÓN: Guardar correctamente en el disco 'public'
+                $image->storeAs('obras', $imageName, 'public');
                 
-                // Ruta relativa (sin 'public/')
+                // Ruta relativa correcta
                 $imagePath = 'obras/' . $imageName;
                 
                 Log::info('STORE - Imagen guardada exitosamente', [
-                    'nombre_original' => $image->getClientOriginalName(),
                     'nombre_guardado' => $imageName,
-                    'ruta_relativa' => $imagePath
+                    'ruta_en_bd' => $imagePath,
+                    'ruta_completa_storage' => storage_path('app/public/obras/' . $imageName)
                 ]);
             } else {
                 Log::error('STORE - No se recibió archivo de imagen');
@@ -129,7 +126,7 @@ class WorkController extends Controller
             $work = Work::create([
                 'title' => $request->title,
                 'description' => $request->description,
-                'image' => $imagePath, // Guardar solo la ruta relativa
+                'image' => $imagePath,
                 'id_usuario' => $request->id_usuario,
                 'id_categoria' => $request->id_categoria,
                 'id_emocion' => $request->id_emocion,
@@ -137,11 +134,10 @@ class WorkController extends Controller
 
             Log::info('STORE - Obra creada exitosamente', [
                 'id' => $work->id_obra,
-                'titulo' => $work->title,
-                'imagen' => $work->image
+                'title' => $work->title,
+                'image' => $work->image
             ]);
 
-            // Cargar relaciones (image_url se incluye automáticamente)
             $work->load(['user', 'category', 'emotion']);
 
             return response()->json([
@@ -154,8 +150,7 @@ class WorkController extends Controller
             Log::error('STORE - Error crítico:', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'line' => $e->getLine()
             ]);
             
             return response()->json([
@@ -167,10 +162,20 @@ class WorkController extends Controller
 
     public function update(Request $request, $id)
     {
-        Log::info('UPDATE - Iniciando actualización obra ID: ' . $id, [
-            'datos' => $request->except(['image', '_method']),
-            'tiene_imagen' => $request->hasFile('image'),
-            'es_formdata' => $request->is('multipart/form-data')
+        // DEBUG EXTENDIDO
+        Log::info('🔄 UPDATE - Request completo:', [
+            'method' => $request->method(),
+            'content_type' => $request->header('Content-Type'),
+            'has_file_image' => $request->hasFile('image'),
+            'all_inputs' => $request->except(['image']),
+            'file_info' => $request->file('image') ? [
+                'name' => $request->file('image')->getClientOriginalName(),
+                'size' => $request->file('image')->getSize(),
+                'mime' => $request->file('image')->getMimeType(),
+                'is_valid' => $request->file('image')->isValid()
+            ] : 'NO FILE',
+            'all_files' => $request->allFiles(),
+            'is_multipart' => $request->is('multipart/form-data')
         ]);
 
         try {
@@ -203,20 +208,15 @@ class WorkController extends Controller
                 'id_emocion' => $request->id_emocion ?? $work->id_emocion,
             ];
 
-            // 🔴 IMPORTANTE: Solo procesar imagen si es un archivo nuevo (File)
-            // NO procesar si es una ruta o string (evitar rutas temporales)
-            if ($request->hasFile('image')) {
-                Log::info('UPDATE - Procesando NUEVA imagen desde archivo');
-                
-                // Validar que sea realmente un archivo
-                $image = $request->file('image');
-                if (!$image->isValid()) {
-                    Log::error('UPDATE - Archivo de imagen no válido');
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'El archivo de imagen no es válido'
-                    ], 422);
-                }
+            // 🔴 CRÍTICO: SOLUCIÓN PARA DETECTAR IMÁGENES CORRECTAMENTE
+            $newImage = $request->file('image');
+            
+            if ($newImage && $newImage->isValid()) {
+                Log::info('UPDATE - Procesando NUEVA imagen válida', [
+                    'name' => $newImage->getClientOriginalName(),
+                    'size' => $newImage->getSize(),
+                    'mime' => $newImage->getMimeType()
+                ]);
                 
                 // Eliminar imagen anterior si existe
                 if ($work->image && Storage::disk('public')->exists($work->image)) {
@@ -225,23 +225,23 @@ class WorkController extends Controller
                 }
                 
                 // Guardar nueva imagen
-                $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
+                $originalName = pathinfo($newImage->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeName = preg_replace('/[^a-zA-Z0-9]/', '_', $originalName);
-                $imageName = 'obra_' . time() . '_' . $safeName . '.' . $image->getClientOriginalExtension();
+                $imageName = 'obra_' . time() . '_' . $safeName . '.' . $newImage->getClientOriginalExtension();
                 $imagePath = 'obras/' . $imageName;
                 
-                $image->storeAs('public/obras', $imageName);
+                // 🔴 CORRECCIÓN: Guardar correctamente en disco 'public'
+                $newImage->storeAs('obras', $imageName, 'public');
+                
                 $updateData['image'] = $imagePath;
                 
-                Log::info('UPDATE - Nueva imagen guardada', [
-                    'ruta' => $imagePath,
-                    'tamaño' => $image->getSize(),
-                    'tipo' => $image->getMimeType()
-                ]);
+                Log::info('UPDATE - Nueva imagen guardada', ['ruta' => $imagePath]);
             } else {
-                Log::info('UPDATE - No hay nueva imagen, manteniendo la existente');
-                // NO actualizar el campo image si no hay nueva imagen
-                // Esto previene que se guarde la ruta temporal que pueda venir del frontend
+                Log::info('UPDATE - No hay nueva imagen válida', [
+                    'file_received' => $newImage ? 'YES' : 'NO',
+                    'is_valid' => $newImage ? ($newImage->isValid() ? 'YES' : 'NO') : 'N/A'
+                ]);
+                // Mantener imagen existente - NO actualizar campo image
             }
 
             // Actualizar la obra
@@ -253,7 +253,6 @@ class WorkController extends Controller
                 'imagen_actual' => $work->image
             ]);
 
-            // Cargar relaciones (image_url se incluye automáticamente)
             $work->load(['user', 'category', 'emotion']);
 
             return response()->json([
@@ -274,8 +273,7 @@ class WorkController extends Controller
                 'obra_id' => $id,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'line' => $e->getLine()
             ]);
             
             return response()->json([
@@ -292,7 +290,6 @@ class WorkController extends Controller
             
             $work = Work::findOrFail($id);
             
-            // Eliminar imagen del storage si existe
             if ($work->image && Storage::disk('public')->exists($work->image)) {
                 Storage::disk('public')->delete($work->image);
                 Log::info('DESTROY - Imagen eliminada del storage: ' . $work->image);
@@ -318,5 +315,57 @@ class WorkController extends Controller
                 'message' => 'Error al eliminar la obra'
             ], 500);
         }
+    }
+
+    public function fixImageUrls()
+    {
+        $works = Work::whereNotNull('image')->get();
+        $updated = 0;
+        
+        foreach ($works as $work) {
+            $oldPath = $work->image;
+            
+            if ($work->image && !str_contains($work->image, '/')) {
+                $newPath = 'obras/' . $work->image;
+                
+                if (Storage::disk('public')->exists($newPath)) {
+                    $work->update(['image' => $newPath]);
+                    Log::info("Ruta corregida: {$oldPath} -> {$newPath}");
+                    $updated++;
+                }
+            }
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'message' => "{$updated} rutas de imágenes corregidas"
+        ]);
+    }
+
+    public function diagnoseImages()
+    {
+        $works = Work::all();
+        $results = [];
+        
+        foreach ($works as $work) {
+            $existsInStorage = Storage::disk('public')->exists($work->image);
+            
+            $results[] = [
+                'id' => $work->id_obra,
+                'title' => $work->title,
+                'image_in_db' => $work->image,
+                'exists_in_storage' => $existsInStorage,
+                'full_storage_path' => $existsInStorage ? 
+                    storage_path('app/public/' . $work->image) : null,
+                'image_url' => $work->image_url
+            ];
+        }
+        
+        return response()->json([
+            'status' => 'success',
+            'storage_root' => storage_path('app/public'),
+            'public_storage_link' => public_path('storage'),
+            'works' => $results
+        ]);
     }
 }

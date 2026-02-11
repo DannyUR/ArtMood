@@ -6,49 +6,15 @@ import { categoryService } from '../../services/categoryService';
 import { emotionService } from '../../services/emotionService';
 import './EditObraModal.css';
 
-// Función helper MEJORADA para construir URLs de imágenes
+// Función simplificada para construir URLs de imágenes
 const getImageUrl = (imagePath, imageUrlFromApi = null) => {
-    console.log('🔍 getImageUrl llamado con:', { 
-        imagePath, 
-        imageUrlFromApi,
-        esString: typeof imagePath === 'string',
-        esStringApi: typeof imageUrlFromApi === 'string'
-    });
-    
-    // PRIMERO: Verificar si la API devuelve image_url válido
+    // Si viene image_url del backend, usarlo
     if (imageUrlFromApi && typeof imageUrlFromApi === 'string') {
-        console.log('✅ Usando image_url de la API:', imageUrlFromApi);
-        
-        // Verificar si es una URL temporal incorrecta
-        if (imageUrlFromApi.includes('\\tmp\\') || 
-            imageUrlFromApi.includes('xampp') || 
-            imageUrlFromApi.includes('C:\\')) {
-            console.error('❌ URL temporal detectada en image_url:', imageUrlFromApi);
-            return ''; // Retornar vacío para mostrar placeholder
-        }
-        
-        // Verificar si es una URL válida
-        if (imageUrlFromApi.startsWith('http://') || imageUrlFromApi.startsWith('https://')) {
-            return imageUrlFromApi;
-        }
-        
-        // Si no empieza con http, podría ser una ruta relativa
-        console.warn('⚠️ image_url no es una URL completa:', imageUrlFromApi);
+        return imageUrlFromApi;
     }
     
-    // SEGUNDO: Si no hay image_url o es inválido, usar imagePath
     if (!imagePath || typeof imagePath !== 'string') {
-        console.log('📭 No hay imagePath válido');
         return '';
-    }
-    
-    // DETECTAR RUTAS TEMPORALES
-    if (imagePath.includes('\\tmp\\') || 
-        imagePath.includes('php') || 
-        imagePath.includes('xampp\\tmp') ||
-        imagePath.includes('C:\\')) {
-        console.error('❌ RUTA TEMPORAL DETECTADA (ERROR):', imagePath);
-        return ''; // Retornar vacío para mostrar fallback
     }
     
     // Si ya es una URL completa
@@ -56,31 +22,21 @@ const getImageUrl = (imagePath, imageUrlFromApi = null) => {
         return imagePath;
     }
     
-    // Si empieza con 'obras/' (ruta relativa correcta del storage)
+    // Si es una ruta local, construir URL completa
+    const baseUrl = 'http://localhost:8000/storage/';
+    
+    // Si solo tiene nombre de archivo, agregar 'obras/'
+    if (!imagePath.includes('/') && !imagePath.startsWith('obras/')) {
+        return `${baseUrl}obras/${imagePath}`;
+    }
+    
+    // Si empieza con 'obras/'
     if (imagePath.startsWith('obras/')) {
-        const url = `http://localhost:8000/storage/${imagePath}`;
-        console.log('🔗 URL construida desde obras/:', url);
-        return url;
+        return `${baseUrl}${imagePath}`;
     }
     
-    // Si empieza con 'storage/' (ya incluye storage/)
-    if (imagePath.startsWith('storage/')) {
-        const url = `http://localhost:8000/${imagePath}`;
-        console.log('🔗 URL construida desde storage/:', url);
-        return url;
-    }
-    
-    // Si empieza con '/' (ruta absoluta del servidor)
-    if (imagePath.startsWith('/')) {
-        const url = `http://localhost:8000${imagePath}`;
-        console.log('🔗 URL construida desde ruta absoluta:', url);
-        return url;
-    }
-    
-    // Por defecto, asumir que es una ruta relativa en storage
-    const url = `http://localhost:8000/storage/${imagePath}`;
-    console.log('🔗 URL por defecto:', url);
-    return url;
+    // Por defecto
+    return `${baseUrl}${imagePath}`;
 };
 
 const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
@@ -111,7 +67,6 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
     }, [isOpen, obraId]);
 
     const resetForm = () => {
-        console.log('🔄 Resetando formulario');
         setObra(null);
         setFormData({
             title: '',
@@ -128,7 +83,7 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
     const loadObraData = async () => {
         try {
             setLoading(true);
-            console.log('📥 Cargando datos de obra ID:', obraId);
+            console.log('📥 Cargando obra ID:', obraId);
 
             const [obraData, categoriasData, emocionesData] = await Promise.all([
                 obraService.getById(obraId),
@@ -142,21 +97,9 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
                 emociones: emocionesData.length
             });
 
-            console.log('📊 DEBUG - Datos completos de la obra:', obraData);
-            console.log('🖼️ DEBUG - Información de imagen:', {
-                tieneImage: !!obraData.image,
-                valorImage: obraData.image,
-                tipoImage: typeof obraData.image,
-                tieneImageUrl: !!obraData.image_url,
-                valorImageUrl: obraData.image_url,
-                otrosCamposImagen: Object.keys(obraData).filter(k => 
-                    k.includes('image') || k.includes('img') || k.includes('url')
-                )
-            });
-
             const userId = user.id_usuario || user.id;
             if (obraData.id_usuario !== userId) {
-                console.error('⛔ Usuario no autorizado para editar esta obra');
+                console.error('⛔ Usuario no autorizado');
                 setError('No tienes permisos para editar esta obra');
                 return;
             }
@@ -167,39 +110,18 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
                 description: obraData.description || '',
                 id_categoria: obraData.id_categoria || '',
                 id_emocion: obraData.id_emocion || '',
-                image: null // Siempre null al cargar, solo File cuando es nueva
+                image: null
             });
 
             setCategorias(categoriasData);
             setEmociones(emocionesData);
 
-            // 🔴 CRÍTICO: Obtener URL de la imagen usando la función helper MEJORADA
+            // Obtener URL de la imagen
             const imageUrl = getImageUrl(obraData.image, obraData.image_url);
-            console.log('🔗 URL final calculada para imagen:', imageUrl);
+            console.log('🖼️ URL de imagen:', imageUrl);
 
-            // Establecer preview solo si tenemos una URL válida (no temporal)
-            if (imageUrl && 
-                !imageUrl.includes('tmp') && 
-                !imageUrl.includes('xampp') && 
-                !imageUrl.includes('C:\\')) {
-                
-                console.log('✅ Estableciendo preview URL:', imageUrl);
+            if (imageUrl) {
                 setPreviewUrl(imageUrl);
-                
-                // Verificar si la imagen realmente existe (async)
-                const testImage = new Image();
-                testImage.onload = () => {
-                    console.log('✅ Imagen cargada exitosamente desde:', imageUrl);
-                };
-                testImage.onerror = () => {
-                    console.error('❌ Error cargando imagen, URL puede ser incorrecta:', imageUrl);
-                    // No limpiar preview aquí para no causar flickering
-                };
-                testImage.src = imageUrl;
-            } else {
-                console.log('⚠️ No hay imagen válida para mostrar o es ruta temporal');
-                console.log('🧹 Limpiando preview URL');
-                setPreviewUrl('');
             }
 
         } catch (error) {
@@ -226,14 +148,9 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
             return;
         }
 
-        console.log('📁 Archivo seleccionado:', {
-            nombre: file.name,
-            tipo: file.type,
-            tamaño: file.size + ' bytes',
-            esImagen: file.type.startsWith('image/')
-        });
+        console.log('📁 Archivo seleccionado:', file.name, file.type, file.size + ' bytes');
 
-        // Validar tipo MIME permitido
+        // Validar tipo
         const allowedTypes = [
             'image/jpeg', 
             'image/jpg', 
@@ -243,8 +160,8 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
         ];
 
         if (!allowedTypes.includes(file.type.toLowerCase())) {
-            setError(`Tipo de archivo "${file.type}" no permitido. Use: PNG, JPG, JPEG, GIF, WEBP`);
-            e.target.value = ''; // Limpiar input
+            setError(`Tipo de archivo no permitido. Use: PNG, JPG, JPEG, GIF, WEBP`);
+            e.target.value = '';
             return;
         }
 
@@ -262,14 +179,13 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
             image: file
         }));
 
-        // Crear preview local (Data URL)
+        // Crear preview local
         const reader = new FileReader();
         reader.onload = (e) => {
             setPreviewUrl(e.target.result);
-            console.log('🖼️ Preview local creado exitosamente');
+            console.log('🖼️ Preview local creado');
         };
-        reader.onerror = (error) => {
-            console.error('❌ Error leyendo archivo:', error);
+        reader.onerror = () => {
             setError('Error al leer el archivo');
         };
         reader.readAsDataURL(file);
@@ -292,40 +208,37 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
             const isNewImage = formData.image && formData.image instanceof File;
 
             if (isNewImage) {
-                console.log('🔄 Enviando obra con NUEVA imagen:', {
-                    nombre: formData.image.name,
-                    tipo: formData.image.type,
-                    tamaño: formData.image.size
-                });
+                console.log('🔄 Enviando obra con NUEVA imagen');
                 
                 const formDataToSend = new FormData();
                 formDataToSend.append('title', formData.title);
                 formDataToSend.append('description', formData.description);
                 formDataToSend.append('_method', 'PUT'); // Para Laravel
 
+                // Solo agregar si tienen valor
                 if (formData.id_categoria) {
                     formDataToSend.append('id_categoria', formData.id_categoria);
-                } else {
-                    formDataToSend.append('id_categoria', '');
                 }
-
                 if (formData.id_emocion) {
                     formDataToSend.append('id_emocion', formData.id_emocion);
-                } else {
-                    formDataToSend.append('id_emocion', '');
                 }
 
                 formDataToSend.append('image', formData.image);
 
-                // Debug: Mostrar contenido del FormData
-                console.log('📦 Contenido de FormData:');
+                // Debug del FormData
+                console.log('📦 FormData preparado:');
                 for (let pair of formDataToSend.entries()) {
-                    console.log(`  ${pair[0]}: ${pair[1] instanceof File ? 
-                        `File(${pair[1].name}, ${pair[1].type})` : 
-                        pair[1]}`);
+                    const [key, value] = pair;
+                    if (value instanceof File) {
+                        console.log(`  ${key}: File(${value.name}, ${value.type}, ${value.size} bytes)`);
+                    } else {
+                        console.log(`  ${key}: ${value}`);
+                    }
                 }
 
-                response = await obraService.update(obraId, formDataToSend);
+                // 🔴 USAR EL NUEVO MÉTODO updateWithImage o update corregido
+                response = await obraService.updateWithImage(obraId, formDataToSend);
+                
             } else {
                 console.log('📤 Enviando obra SIN nueva imagen');
                 const updateData = {
@@ -339,16 +252,19 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
                 response = await obraService.update(obraId, updateData);
             }
 
-            console.log('✅ Respuesta del servidor:', response.data);
+            console.log('✅ Respuesta del servidor:', response.data || response);
             
-            if (response.data.status === 'success') {
+            // Manejar ambas formas de respuesta (data o response directo)
+            const responseData = response.data || response;
+            
+            if (responseData.status === 'success') {
                 console.log('🎉 Obra actualizada exitosamente');
                 alert('¡Obra actualizada exitosamente!');
                 onSuccess?.();
                 onClose();
             } else {
-                console.error('❌ Error en respuesta del servidor:', response.data);
-                setError(response.data.message || 'Error al actualizar la obra');
+                console.error('❌ Error en respuesta del servidor:', responseData);
+                setError(responseData.message || 'Error al actualizar la obra');
             }
 
         } catch (error) {
@@ -357,16 +273,14 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
             if (error.response?.status === 422) {
                 const validationErrors = error.response.data.errors;
                 const errorMessages = Object.values(validationErrors).flat().join(', ');
-                console.error('⚠️ Errores de validación:', validationErrors);
                 setError(`Errores de validación: ${errorMessages}`);
             } else if (error.response?.status === 500) {
-                console.error('💥 Error del servidor');
                 setError('Error del servidor. Por favor, intente más tarde.');
             } else {
                 const errorMessage = error.response?.data?.message ||
                     error.response?.data?.error ||
+                    error.message ||
                     'Error al actualizar la obra';
-                console.error('❌ Error general:', errorMessage);
                 setError(errorMessage);
             }
         } finally {
@@ -378,23 +292,12 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
         console.log('🗑️ Removiendo imagen seleccionada');
         setFormData(prev => ({ ...prev, image: null }));
         
-        // Restaurar la imagen original de la obra (si existe y es válida)
+        // Restaurar la imagen original
         if (obra?.image || obra?.image_url) {
             const originalUrl = getImageUrl(obra.image, obra.image_url);
             console.log('🔄 Restaurando imagen original:', originalUrl);
-            
-            // Solo restaurar si no es una ruta temporal
-            if (originalUrl && 
-                !originalUrl.includes('tmp') && 
-                !originalUrl.includes('xampp') && 
-                !originalUrl.includes('C:\\')) {
-                setPreviewUrl(originalUrl);
-            } else {
-                console.log('⚠️ Imagen original es temporal, mostrando placeholder');
-                setPreviewUrl('');
-            }
+            setPreviewUrl(originalUrl);
         } else {
-            console.log('📭 No hay imagen original para restaurar');
             setPreviewUrl('');
         }
     };
@@ -409,11 +312,9 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
 
         if (hasChanges) {
             if (window.confirm('¿Estás seguro de que quieres cancelar? Los cambios no guardados se perderán.')) {
-                console.log('❌ Edición cancelada por usuario');
                 onClose();
             }
         } else {
-            console.log('👋 Cerrando modal sin cambios');
             onClose();
         }
     };
@@ -476,16 +377,8 @@ const EditObraModal = ({ isOpen, onClose, obraId, onSuccess }) => {
                                             alt="Preview"
                                             className="edito-preview-image"
                                             onError={(e) => {
-                                                console.error('❌ Error cargando imagen en preview');
+                                                console.error('❌ Error cargando imagen');
                                                 e.target.style.display = 'none';
-                                                // Mostrar placeholder o mensaje
-                                                const container = e.target.parentElement;
-                                                if (container) {
-                                                    const fallback = document.createElement('div');
-                                                    fallback.className = 'image-fallback';
-                                                    fallback.innerHTML = '🖼️<br/><small>Imagen no disponible</small>';
-                                                    container.appendChild(fallback);
-                                                }
                                             }}
                                         />
                                         <button

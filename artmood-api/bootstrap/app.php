@@ -11,9 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withCommands([  // ✅ Agrega esta línea
+        \App\Console\Commands\FixAllWorks::class,
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
-         $middleware->group('api', [\Illuminate\Routing\Middleware\SubstituteBindings::class,]);
-         $middleware->alias([
+        $middleware->group('api', [\Illuminate\Routing\Middleware\SubstituteBindings::class,]);
+        $middleware->alias([
             'jwt.verify' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
             'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         ]);
